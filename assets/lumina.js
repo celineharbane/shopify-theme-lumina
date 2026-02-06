@@ -519,7 +519,16 @@ class CartDrawer extends HTMLElement {
         currentShipping.innerHTML = newShipping.innerHTML;
       }
 
-      this.updateCartCount();
+      // Update header cart count from the refreshed drawer content (no extra fetch needed)
+      const newCountText = doc.querySelector('.cart-drawer__count')?.textContent;
+      if (newCountText) {
+        const countMatch = newCountText.match(/\d+/);
+        const itemCount = countMatch ? parseInt(countMatch[0], 10) : 0;
+        document.querySelectorAll('[data-cart-count]').forEach(el => {
+          el.textContent = itemCount;
+          el.classList.toggle('is-hidden', itemCount === 0);
+        });
+      }
 
     } catch (error) {
       console.error('Failed to refresh cart:', error);
