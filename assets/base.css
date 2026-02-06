@@ -465,6 +465,7 @@ p:last-child {
   font-size: 1.6rem;
   font-weight: 500;
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .quantity-selector__input::-webkit-outer-spin-button,

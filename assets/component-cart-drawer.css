@@ -308,6 +308,7 @@
   text-align: center;
   color: rgb(var(--color-text));
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .cart-drawer__quantity-input::-webkit-inner-spin-button,

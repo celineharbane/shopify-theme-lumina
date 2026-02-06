@@ -427,6 +427,7 @@ input:checked + .main-product__option-button.is-color {
   text-align: center;
   font-size: 1rem;
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .quantity-input__field::-webkit-outer-spin-button,
