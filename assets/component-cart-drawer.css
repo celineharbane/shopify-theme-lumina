@@ -48,6 +48,7 @@
 
 .cart-drawer.is-open .cart-drawer__container {
   transform: translateX(0);
+  background-color: var(--color-background);
 }
 
 /* --------------------------------------------------------------------------
