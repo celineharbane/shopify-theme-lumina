@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "header",
   "name": "Header group",
@@ -7,11 +16,10 @@
       "settings": {
         "logo_width": 150,
         "menu": "main-menu",
-        "sticky_header": true,
+        "sticky_header": false,
+        "transparent_header": false,
         "show_search": true,
-        "show_account": true,
-        "header_style": "magazine",
-        "menu_style": "mega"
+        "show_account": true
       }
     }
   },
