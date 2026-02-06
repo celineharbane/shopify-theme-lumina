@@ -324,33 +324,28 @@ class CartDrawer extends HTMLElement {
   }
 
   async removeItem(cartItem) {
-    const key = cartItem.dataset.key;
     const line = cartItem.dataset.line;
 
-    if (!key && !line) return;
+    if (!line) {
+      console.error('CartDrawer: Missing line attribute on cart item');
+      return;
+    }
 
     this.showItemLoading(cartItem);
 
     try {
-      const body = key
-        ? { updates: { [key]: 0 } }
-        : { line: parseInt(line, 10), quantity: 0 };
+      const formData = new FormData();
+      formData.append('line', line);
+      formData.append('quantity', '0');
 
       const response = await fetch(Lumina.routes.cartChange, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(body)
+        body: formData
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      // Parse response to ensure it was successful
-      await response.json();
 
       // Refresh drawer and update count
       await this.refresh();
@@ -364,12 +359,14 @@ class CartDrawer extends HTMLElement {
   }
 
   async updateItemQuantity(cartItem, quantity) {
-    const key = cartItem.dataset.key;
     const line = cartItem.dataset.line;
 
-    if (!key && !line) return;
+    if (!line) {
+      console.error('CartDrawer: Missing line attribute on cart item');
+      return;
+    }
 
-    // If quantity is 0, remove the item
+    // If quantity is 0 or less, remove the item
     if (quantity <= 0) {
       await this.removeItem(cartItem);
       return;
@@ -378,28 +375,17 @@ class CartDrawer extends HTMLElement {
     this.showItemLoading(cartItem);
 
     try {
-      const body = key
-        ? { updates: { [key]: quantity } }
-        : { line: parseInt(line, 10), quantity: quantity };
+      const formData = new FormData();
+      formData.append('line', line);
+      formData.append('quantity', quantity.toString());
 
       const response = await fetch(Lumina.routes.cartChange, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(body)
+        body: formData
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const cart = await response.json();
-
-      // Check if quantity was adjusted due to inventory
-      if (cart.status === 422) {
-        this.showNotification(cart.description || Lumina.cartStrings?.quantityError || 'Quantity not available', 'error');
       }
 
       // Refresh drawer and update count
@@ -662,15 +648,20 @@ class QuantityInput extends HTMLElement {
 
   onButtonClick(e) {
     e.preventDefault();
-    const previousValue = this.input.value;
-    
+
+    const min = parseInt(this.input.min) || 0;
+    const max = parseInt(this.input.max) || 9999;
+    const step = parseInt(this.input.step) || 1;
+    let currentValue = parseInt(this.input.value) || min;
+
     if (e.currentTarget.name === 'plus') {
-      this.input.stepUp();
+      currentValue = Math.min(currentValue + step, max);
     } else {
-      this.input.stepDown();
+      currentValue = Math.max(currentValue - step, min);
     }
-    
-    if (previousValue !== this.input.value) {
+
+    if (this.input.value !== currentValue.toString()) {
+      this.input.value = currentValue;
       this.input.dispatchEvent(this.changeEvent);
     }
   }
@@ -1065,21 +1056,18 @@ class QuickAdd {
     button.innerHTML = '<span class="spinner"></span>';
 
     try {
+      const formData = new FormData();
+      formData.append('id', variantId);
+      formData.append('quantity', '1');
+
       const response = await fetch(Lumina.routes.cartAdd, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          id: parseInt(variantId, 10),
-          quantity: 1
-        })
+        body: formData
       });
 
       const result = await response.json();
 
-      if (result.status === 422) {
+      if (result.status === 422 || !response.ok) {
         this.showNotification(result.description || Lumina.cartStrings?.error || 'Error adding to cart', 'error');
         return;
       }
