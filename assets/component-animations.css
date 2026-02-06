@@ -1,0 +1,425 @@
+/* ============================================
+   LUMINA THEME - Luxury Animations
+   Ritual-inspired elegant transitions
+   ============================================ */
+
+/* Base Animation Variables */
+:root {
+  --ease-luxury: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 200ms;
+  --duration-normal: 400ms;
+  --duration-slow: 600ms;
+  --duration-slower: 800ms;
+}
+
+/* Reveal Animation (Luxury style) */
+[data-animate="reveal"] {
+  opacity: 0;
+  clip-path: inset(100% 0 0 0);
+  transition: opacity var(--duration-slow) var(--ease-luxury),
+              clip-path var(--duration-slow) var(--ease-luxury);
+}
+
+[data-animate="reveal"].is-visible {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+}
+
+/* Fade Up Animation */
+[data-animate="fade-up"],
+[data-animate] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity var(--duration-normal) var(--ease-luxury),
+              transform var(--duration-normal) var(--ease-luxury);
+}
+
+[data-animate="fade-up"].is-visible,
+[data-animate].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Fade In Animation */
+[data-animate="fade"] {
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-smooth);
+}
+
+[data-animate="fade"].is-visible {
+  opacity: 1;
+}
+
+/* Zoom In Animation */
+[data-animate="zoom"] {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity var(--duration-normal) var(--ease-luxury),
+              transform var(--duration-normal) var(--ease-luxury);
+}
+
+[data-animate="zoom"].is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Slide From Left */
+[data-animate="slide-left"] {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity var(--duration-normal) var(--ease-luxury),
+              transform var(--duration-normal) var(--ease-luxury);
+}
+
+[data-animate="slide-left"].is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide From Right */
+[data-animate="slide-right"] {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity var(--duration-normal) var(--ease-luxury),
+              transform var(--duration-normal) var(--ease-luxury);
+}
+
+[data-animate="slide-right"].is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stagger Animation Delays */
+[data-animate-stagger] > *:nth-child(1) { transition-delay: 0ms; }
+[data-animate-stagger] > *:nth-child(2) { transition-delay: 50ms; }
+[data-animate-stagger] > *:nth-child(3) { transition-delay: 100ms; }
+[data-animate-stagger] > *:nth-child(4) { transition-delay: 150ms; }
+[data-animate-stagger] > *:nth-child(5) { transition-delay: 200ms; }
+[data-animate-stagger] > *:nth-child(6) { transition-delay: 250ms; }
+[data-animate-stagger] > *:nth-child(7) { transition-delay: 300ms; }
+[data-animate-stagger] > *:nth-child(8) { transition-delay: 350ms; }
+
+/* Image Hover Effects - Luxury Style */
+.image-hover-zoom {
+  overflow: hidden;
+}
+
+.image-hover-zoom img {
+  transition: transform var(--duration-slower) var(--ease-luxury);
+}
+
+.image-hover-zoom:hover img {
+  transform: scale(1.08);
+}
+
+/* Image Reveal Effect */
+.image-reveal {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-reveal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-background);
+  transform: scaleX(1);
+  transform-origin: right;
+  transition: transform var(--duration-slower) var(--ease-luxury);
+}
+
+.image-reveal.is-visible::after {
+  transform: scaleX(0);
+}
+
+/* Text Split Animation */
+.text-split span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity var(--duration-normal) var(--ease-luxury),
+              transform var(--duration-normal) var(--ease-luxury);
+}
+
+.text-split.is-visible span {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Line Draw Animation */
+.line-draw {
+  position: relative;
+}
+
+.line-draw::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-normal) var(--ease-luxury);
+}
+
+.line-draw:hover::after,
+.line-draw.is-active::after {
+  transform: scaleX(1);
+}
+
+/* Button Hover Effects */
+.button-luxury {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.button-luxury::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-accent);
+  transform: translateY(100%);
+  transition: transform var(--duration-normal) var(--ease-luxury);
+  z-index: -1;
+}
+
+.button-luxury:hover::before {
+  transform: translateY(0);
+}
+
+/* Card Hover Lift */
+.card-lift {
+  transition: transform var(--duration-normal) var(--ease-luxury),
+              box-shadow var(--duration-normal) var(--ease-luxury);
+}
+
+.card-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(var(--color-text-rgb), 0.12);
+}
+
+/* Magnetic Hover Effect (for buttons/icons) */
+[data-magnetic] {
+  transition: transform var(--duration-fast) var(--ease-smooth);
+}
+
+/* Cursor Follower Animation */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Loading Shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-background-secondary) 25%,
+    var(--color-background) 50%,
+    var(--color-background-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  display: flex;
+  overflow: hidden;
+}
+
+.marquee__content {
+  display: flex;
+  animation: marquee 20s linear infinite;
+}
+
+.marquee:hover .marquee__content {
+  animation-play-state: paused;
+}
+
+/* Parallax Effect */
+[data-parallax] {
+  will-change: transform;
+}
+
+/* Smooth Scroll Indicator */
+@keyframes scroll-indicator {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(10px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.scroll-indicator {
+  animation: scroll-indicator 2s ease-in-out infinite;
+}
+
+/* Number Counter Animation */
+@keyframes count-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.counter-animate {
+  animation: count-up var(--duration-normal) var(--ease-luxury) forwards;
+}
+
+/* Page Transition Overlay */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-primary);
+  z-index: 9999;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform var(--duration-slow) var(--ease-luxury);
+}
+
+.page-transition.is-entering {
+  transform: scaleY(1);
+  transform-origin: top;
+}
+
+.page-transition.is-leaving {
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+/* Product Image Gallery Transitions */
+.gallery-fade-enter {
+  opacity: 0;
+}
+
+.gallery-fade-enter-active {
+  opacity: 1;
+  transition: opacity var(--duration-normal) var(--ease-smooth);
+}
+
+.gallery-fade-exit {
+  opacity: 1;
+}
+
+.gallery-fade-exit-active {
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-smooth);
+}
+
+/* Cart Drawer Animation */
+.cart-drawer-enter {
+  transform: translateX(100%);
+}
+
+.cart-drawer-enter-active {
+  transform: translateX(0);
+  transition: transform var(--duration-normal) var(--ease-luxury);
+}
+
+.cart-drawer-exit {
+  transform: translateX(0);
+}
+
+.cart-drawer-exit-active {
+  transform: translateX(100%);
+  transition: transform var(--duration-normal) var(--ease-luxury);
+}
+
+/* Quick View Modal Animation */
+.modal-scale-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.modal-scale-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity var(--duration-normal) var(--ease-luxury),
+              transform var(--duration-normal) var(--ease-luxury);
+}
+
+/* Floating Labels Animation */
+.floating-label {
+  position: relative;
+}
+
+.floating-label label {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  transition: all var(--duration-fast) var(--ease-smooth);
+  pointer-events: none;
+  color: var(--color-text-light);
+}
+
+.floating-label input:focus ~ label,
+.floating-label input:not(:placeholder-shown) ~ label {
+  top: 0;
+  transform: translateY(-100%);
+  font-size: 0.8em;
+  color: var(--color-primary);
+}
+
+/* Disable animations for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  [data-animate],
+  [data-animate="reveal"],
+  [data-animate="fade-up"],
+  [data-animate="fade"],
+  [data-animate="zoom"],
+  [data-animate="slide-left"],
+  [data-animate="slide-right"] {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+}

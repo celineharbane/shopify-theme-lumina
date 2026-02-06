@@ -1,0 +1,75 @@
+{{ 'section-collection-banner.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign show_collection_image = section.settings.show_collection_image
+  assign show_collection_description = section.settings.show_collection_description
+-%}
+
+<section
+  id="CollectionBanner-{{ section.id }}"
+  class="collection-banner{% if collection.image and show_collection_image %} collection-banner--has-image{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="collection-banner"
+>
+  {%- if collection.image and show_collection_image -%}
+    <div class="collection-banner__image-wrapper">
+      {{
+        collection.image
+        | image_url: width: 2000
+        | image_tag:
+          loading: 'eager',
+          sizes: '100vw',
+          widths: '750, 1000, 1500, 2000',
+          class: 'collection-banner__image'
+      }}
+      <div class="collection-banner__overlay"></div>
+    </div>
+  {%- endif -%}
+
+  <div class="collection-banner__content page-width">
+    <h1 class="collection-banner__title h1">{{ collection.title }}</h1>
+
+    {%- if collection.description != blank and show_collection_description -%}
+      <div class="collection-banner__description rte">
+        {{ collection.description }}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection banner",
+  "tag": "section",
+  "class": "section section-collection-banner",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "Show collection description",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" }
+      ],
+      "default": "none"
+    }
+  ]
+}
+{% endschema %}

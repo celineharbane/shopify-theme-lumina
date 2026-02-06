@@ -1,0 +1,162 @@
+{
+  "current": {
+    "color_primary": "#0d0d0d",
+    "color_secondary": "#1a1a1a",
+    "color_accent": "#b8860b",
+    "color_background": "#ffffff",
+    "color_background_secondary": "#faf9f7",
+    "color_text": "#0d0d0d",
+    "color_text_light": "#666666",
+    "color_button": "#0d0d0d",
+    "color_button_text": "#ffffff",
+    "color_button_hover": "#b8860b",
+    "font_heading": "playfair_display_n4",
+    "font_heading_scale": 110,
+    "font_body": "assistant_n4",
+    "font_body_scale": 100,
+    "page_width": 1400,
+    "spacing_sections": 80,
+    "grid_gap": 20,
+    "border_radius": 0,
+    "enable_animations": true,
+    "animation_style": "slide-up",
+    "animation_duration": 500,
+    "cart_type": "drawer",
+    "cart_show_vendor": false,
+    "cart_enable_note": true,
+    "cart_show_recommendations": true,
+    "product_show_secondary_image": true,
+    "product_show_vendor": true,
+    "product_show_rating": true,
+    "product_image_ratio": "portrait",
+    "product_quick_add": true,
+    "sale_badge_style": "percentage",
+    "currency_show_codes": false,
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {
+          "logo_width": 150,
+          "menu": "main-menu",
+          "sticky_header": true,
+          "show_search": true,
+          "show_account": true,
+          "header_style": "magazine",
+          "menu_style": "mega"
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "menu_1": {
+            "type": "menu",
+            "settings": {
+              "title": "Shop",
+              "menu": "footer"
+            }
+          },
+          "menu_2": {
+            "type": "menu",
+            "settings": {
+              "title": "Help",
+              "menu": "footer-help"
+            }
+          },
+          "newsletter": {
+            "type": "newsletter",
+            "settings": {
+              "title": "Newsletter",
+              "text": "Subscribe to receive updates, access to exclusive deals, and more."
+            }
+          }
+        },
+        "block_order": ["menu_1", "menu_2", "newsletter"],
+        "settings": {
+          "show_social": true,
+          "show_payment_icons": true,
+          "copyright_text": "© {{ 'now' | date: '%Y' }} {{ shop.name }}"
+        }
+      }
+    },
+    "content_for_index": []
+  },
+  "presets": {
+    "Default": {
+      "color_primary": "#1a1a2e",
+      "color_secondary": "#16213e",
+      "color_accent": "#e94560"
+    },
+    "Elegant Light": {
+      "color_primary": "#2c3e50",
+      "color_secondary": "#34495e",
+      "color_accent": "#c0392b",
+      "color_background": "#fdfefe",
+      "color_background_secondary": "#f4f6f7"
+    },
+    "Modern Dark": {
+      "color_primary": "#0f0f0f",
+      "color_secondary": "#1a1a1a",
+      "color_accent": "#00d9ff",
+      "color_background": "#0f0f0f",
+      "color_background_secondary": "#1a1a1a",
+      "color_text": "#ffffff",
+      "color_text_light": "#a0a0a0",
+      "color_button": "#00d9ff",
+      "color_button_text": "#0f0f0f"
+    },
+    "Nature": {
+      "color_primary": "#2d5016",
+      "color_secondary": "#3d6b1e",
+      "color_accent": "#8bc34a",
+      "color_background": "#fafdf7",
+      "color_background_secondary": "#f1f8e9"
+    },
+    "Luxury Gold": {
+      "color_primary": "#1a1a1a",
+      "color_secondary": "#2d2d2d",
+      "color_accent": "#d4af37",
+      "color_background": "#fffef9",
+      "color_background_secondary": "#f9f6ef"
+    },
+    "Ritual": {
+      "color_primary": "#0d0d0d",
+      "color_secondary": "#1a1a1a",
+      "color_accent": "#b8860b",
+      "color_background": "#ffffff",
+      "color_background_secondary": "#faf9f7",
+      "color_text": "#0d0d0d",
+      "color_text_light": "#666666",
+      "color_button": "#0d0d0d",
+      "color_button_text": "#ffffff",
+      "color_button_hover": "#b8860b",
+      "font_heading": "playfair_display_n4",
+      "font_heading_scale": 110,
+      "font_body": "assistant_n4",
+      "font_body_scale": 100,
+      "border_radius": 0,
+      "animation_style": "slide-up",
+      "animation_duration": 500,
+      "spacing_sections": 80
+    },
+    "Ritual Dark": {
+      "color_primary": "#f5f5f5",
+      "color_secondary": "#e0e0e0",
+      "color_accent": "#c9a962",
+      "color_background": "#0d0d0d",
+      "color_background_secondary": "#1a1a1a",
+      "color_text": "#f5f5f5",
+      "color_text_light": "#999999",
+      "color_button": "#f5f5f5",
+      "color_button_text": "#0d0d0d",
+      "color_button_hover": "#c9a962",
+      "font_heading": "playfair_display_n4",
+      "font_heading_scale": 110,
+      "font_body": "assistant_n4",
+      "font_body_scale": 100,
+      "border_radius": 0,
+      "animation_style": "slide-up",
+      "animation_duration": 500,
+      "spacing_sections": 80
+    }
+  }
+}

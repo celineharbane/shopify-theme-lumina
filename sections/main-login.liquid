@@ -1,0 +1,163 @@
+{{ 'section-customer.css' | asset_url | stylesheet_tag }}
+
+<section class="customer customer--login" data-section-id="{{ section.id }}">
+  <div class="customer__container page-width">
+    
+    <div class="customer__box" data-aos="fade-up">
+      <header class="customer__header">
+        <h1 class="customer__title h2">{{ 'customer.login.title' | t }}</h1>
+      </header>
+
+      {%- form 'customer_login', novalidate: 'novalidate' -%}
+        {%- if form.errors -%}
+          <div class="form__message form__message--error">
+            {%- render 'icon-error' -%}
+            <p>{{ form.errors | default_errors }}</p>
+          </div>
+        {%- endif -%}
+
+        <div class="field">
+          <input
+            type="email"
+            name="customer[email]"
+            id="CustomerEmail"
+            class="field__input"
+            autocomplete="email"
+            autocorrect="off"
+            autocapitalize="off"
+            placeholder=" "
+            required
+            {% if form.errors contains 'form' %}
+              aria-invalid="true"
+            {% endif %}
+          >
+          <label for="CustomerEmail" class="field__label">{{ 'customer.login.email' | t }}</label>
+        </div>
+
+        <div class="field">
+          <input
+            type="password"
+            name="customer[password]"
+            id="CustomerPassword"
+            class="field__input"
+            autocomplete="current-password"
+            placeholder=" "
+            required
+            {% if form.errors contains 'form' %}
+              aria-invalid="true"
+            {% endif %}
+          >
+          <label for="CustomerPassword" class="field__label">{{ 'customer.login.password' | t }}</label>
+        </div>
+
+        <div class="customer__actions">
+          <button type="submit" class="button button--full-width">
+            {{ 'customer.login.sign_in' | t }}
+          </button>
+        </div>
+
+        <div class="customer__links">
+          <a href="#recover" id="RecoverLink" class="link">
+            {{ 'customer.login.forgot_password' | t }}
+          </a>
+        </div>
+      {%- endform -%}
+
+      <div class="customer__footer">
+        <p>{{ 'customer.login.new_customer' | t }}</p>
+        <a href="{{ routes.account_register_url }}" class="link link--underline">
+          {{ 'customer.login.create_account' | t }}
+        </a>
+      </div>
+    </div>
+
+    {%- comment -%} Password Recovery Form {%- endcomment -%}
+    <div class="customer__box customer__recover" id="recover" hidden data-aos="fade-up">
+      <header class="customer__header">
+        <h1 class="customer__title h2">{{ 'customer.recover_password.title' | t }}</h1>
+        <p class="customer__subtitle">{{ 'customer.recover_password.subtext' | t }}</p>
+      </header>
+
+      {%- form 'recover_customer_password' -%}
+        {%- if form.posted_successfully? -%}
+          <div class="form__message form__message--success">
+            {%- render 'icon-check' -%}
+            <p>{{ 'customer.recover_password.success' | t }}</p>
+          </div>
+        {%- endif -%}
+
+        <div class="field">
+          <input
+            type="email"
+            name="email"
+            id="RecoverEmail"
+            class="field__input"
+            autocomplete="email"
+            autocorrect="off"
+            autocapitalize="off"
+            placeholder=" "
+            required
+          >
+          <label for="RecoverEmail" class="field__label">{{ 'customer.recover_password.email' | t }}</label>
+        </div>
+
+        <div class="customer__actions">
+          <button type="submit" class="button button--full-width">
+            {{ 'customer.recover_password.submit' | t }}
+          </button>
+        </div>
+
+        <div class="customer__links">
+          <a href="#login" id="CancelLink" class="link">
+            {{ 'customer.recover_password.cancel' | t }}
+          </a>
+        </div>
+      {%- endform -%}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function() {
+    const loginBox = document.querySelector('.customer--login .customer__box:not(.customer__recover)');
+    const recoverBox = document.querySelector('.customer__recover');
+    const recoverLink = document.getElementById('RecoverLink');
+    const cancelLink = document.getElementById('CancelLink');
+
+    function showRecover() {
+      loginBox.hidden = true;
+      recoverBox.hidden = false;
+      window.location.hash = '#recover';
+    }
+
+    function showLogin() {
+      recoverBox.hidden = true;
+      loginBox.hidden = false;
+      window.history.replaceState(null, null, window.location.pathname);
+    }
+
+    recoverLink?.addEventListener('click', (e) => {
+      e.preventDefault();
+      showRecover();
+    });
+
+    cancelLink?.addEventListener('click', (e) => {
+      e.preventDefault();
+      showLogin();
+    });
+
+    // Check hash on load
+    if (window.location.hash === '#recover') {
+      showRecover();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Login",
+  "tag": "section",
+  "class": "section section-customer"
+}
+{% endschema %}

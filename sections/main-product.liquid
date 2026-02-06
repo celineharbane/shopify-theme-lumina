@@ -1,0 +1,612 @@
+{{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign featured_media = current_variant.featured_media | default: product.featured_media
+-%}
+
+<section
+  id="MainProduct-{{ section.id }}"
+  class="main-product{% if section.settings.product_style == 'ritual' %} main-product--ritual{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="main-product"
+  data-product-id="{{ product.id }}"
+>
+  <div class="main-product__container page-width">
+    <div class="main-product__grid">
+      
+      {%- comment -%} Media Gallery {%- endcomment -%}
+      <div class="main-product__media-wrapper" data-aos="fade-right">
+        <product-gallery class="main-product__gallery gallery-layout-{{ section.settings.gallery_layout }}">
+          
+          {%- comment -%} Main Image {%- endcomment -%}
+          <div class="main-product__main-media">
+            {%- for media in product.media -%}
+              <div 
+                class="main-product__media-item{% if media.id == featured_media.id %} is-active{% endif %}"
+                data-media-id="{{ media.id }}"
+                data-media-type="{{ media.media_type }}"
+              >
+                {%- case media.media_type -%}
+                  {%- when 'image' -%}
+                    {%- assign zoom_image_url = media | image_url: width: 2000 -%}
+                    <div class="main-product__image-wrapper{% if section.settings.enable_zoom %} zoom-enabled{% endif %}" data-zoom-image="{{ zoom_image_url }}">
+                      {{
+                        media
+                        | image_url: width: 1200
+                        | image_tag:
+                          loading: 'lazy',
+                          sizes: '(min-width: 990px) 50vw, 100vw',
+                          widths: '375, 550, 750, 1000, 1200',
+                          class: 'main-product__image'
+                      }}
+                    </div>
+                  
+                  {%- when 'video' -%}
+                    <div class="main-product__video">
+                      {{ media | video_tag: autoplay: false, loop: true, muted: false, controls: true }}
+                    </div>
+                  
+                  {%- when 'external_video' -%}
+                    <div class="main-product__external-video">
+                      {{ media | external_video_tag }}
+                    </div>
+                  
+                  {%- when 'model' -%}
+                    <div class="main-product__model">
+                      {{ media | model_viewer_tag: reveal: 'interaction', toggleable: true }}
+                    </div>
+                {%- endcase -%}
+              </div>
+            {%- endfor -%}
+
+            {%- comment -%} Navigation Arrows {%- endcomment -%}
+            {%- if product.media.size > 1 -%}
+              <button type="button" class="main-product__nav-button main-product__nav-button--prev" aria-label="{{ 'accessibility.previous_slide' | t }}">
+                {%- render 'icon-chevron-left' -%}
+              </button>
+              <button type="button" class="main-product__nav-button main-product__nav-button--next" aria-label="{{ 'accessibility.next_slide' | t }}">
+                {%- render 'icon-chevron-right' -%}
+              </button>
+            {%- endif -%}
+
+            {%- comment -%} Badges {%- endcomment -%}
+            <div class="main-product__badges">
+              {%- if current_variant.compare_at_price > current_variant.price -%}
+                {%- assign savings = current_variant.compare_at_price | minus: current_variant.price -%}
+                {%- assign savings_percent = savings | times: 100.0 | divided_by: current_variant.compare_at_price | round -%}
+                <span class="badge badge--sale">-{{ savings_percent }}%</span>
+              {%- endif -%}
+              {%- unless current_variant.available -%}
+                <span class="badge badge--soldout">{{ 'products.product.sold_out' | t }}</span>
+              {%- endunless -%}
+            </div>
+          </div>
+
+          {%- comment -%} Thumbnails {%- endcomment -%}
+          {%- if product.media.size > 1 -%}
+            <div class="main-product__thumbnails">
+              {%- for media in product.media -%}
+                <button 
+                  type="button"
+                  class="main-product__thumbnail{% if media.id == featured_media.id %} is-active{% endif %}"
+                  data-media-id="{{ media.id }}"
+                  aria-label="{{ 'products.product.media' | t: index: forloop.index }}"
+                >
+                  {%- if media.media_type == 'image' -%}
+                    {{ media | image_url: width: 150 | image_tag: loading: 'lazy' }}
+                  {%- else -%}
+                    {{ media.preview_image | image_url: width: 150 | image_tag: loading: 'lazy' }}
+                    <span class="main-product__thumbnail-badge">
+                      {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+                        {%- render 'icon-play' -%}
+                      {%- elsif media.media_type == 'model' -%}
+                        {%- render 'icon-3d' -%}
+                      {%- endif -%}
+                    </span>
+                  {%- endif -%}
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+        </product-gallery>
+      </div>
+
+      {%- comment -%} Product Info {%- endcomment -%}
+      <div class="main-product__info" data-aos="fade-left" data-aos-delay="100">
+        
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            
+            {%- when '@app' -%}
+              <div class="main-product__block" {{ block.shopify_attributes }}>
+                {% render block %}
+              </div>
+
+            {%- when 'vendor' -%}
+              {%- if product.vendor != blank -%}
+                <p class="main-product__vendor" {{ block.shopify_attributes }}>
+                  <a href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
+                </p>
+              {%- endif -%}
+
+            {%- when 'title' -%}
+              <h1 class="main-product__title h2" {{ block.shopify_attributes }}>
+                {{ product.title }}
+              </h1>
+
+            {%- when 'rating' -%}
+              {%- if product.metafields.reviews.rating.value != blank -%}
+                <div class="main-product__rating" {{ block.shopify_attributes }}>
+                  {%- liquid
+                    assign rating = product.metafields.reviews.rating.value
+                    assign rating_count = product.metafields.reviews.rating_count.value
+                  -%}
+                  <div class="rating" role="img" aria-label="{{ 'accessibility.star_rating' | t: rating: rating, max: 5 }}">
+                    {%- for i in (1..5) -%}
+                      <span class="rating__star{% if i <= rating %} is-filled{% endif %}">
+                        {%- render 'icon-star' -%}
+                      </span>
+                    {%- endfor -%}
+                  </div>
+                  {%- if rating_count != blank -%}
+                    <span class="main-product__rating-count">({{ rating_count }})</span>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+            {%- when 'price' -%}
+              <div class="main-product__price" id="price-{{ section.id }}" {{ block.shopify_attributes }}>
+                {%- if current_variant.compare_at_price > current_variant.price -%}
+                  <span class="main-product__price-compare">
+                    {{ current_variant.compare_at_price | money }}
+                  </span>
+                {%- endif -%}
+                <span class="main-product__price-current{% if current_variant.compare_at_price > current_variant.price %} on-sale{% endif %}">
+                  {{ current_variant.price | money }}
+                </span>
+                {%- if current_variant.unit_price_measurement -%}
+                  <span class="main-product__unit-price">
+                    {{ current_variant.unit_price | money }} / {{ current_variant.unit_price_measurement.reference_value }}{{ current_variant.unit_price_measurement.reference_unit }}
+                  </span>
+                {%- endif -%}
+              </div>
+
+            {%- when 'variant_picker' -%}
+              {%- unless product.has_only_default_variant -%}
+                <variant-picker 
+                  class="main-product__variants"
+                  data-section="{{ section.id }}"
+                  data-url="{{ product.url }}"
+                  {{ block.shopify_attributes }}
+                >
+                  {%- for option in product.options_with_values -%}
+                    <div class="main-product__option">
+                      <label class="main-product__option-label">
+                        {{ option.name }}
+                        {%- if block.settings.show_selected %}: <span class="main-product__option-value">{{ option.selected_value }}</span>{%- endif -%}
+                      </label>
+                      
+                      {%- if block.settings.picker_type == 'button' -%}
+                        <div class="main-product__option-values">
+                          {%- for value in option.values -%}
+                            <input 
+                              type="radio" 
+                              id="Option-{{ section.id }}-{{ option.position }}-{{ forloop.index }}"
+                              name="Option-{{ option.position }}"
+                              value="{{ value | escape }}"
+                              {% if option.selected_value == value %}checked{% endif %}
+                              class="visually-hidden"
+                            >
+                            <label 
+                              for="Option-{{ section.id }}-{{ option.position }}-{{ forloop.index }}"
+                              class="main-product__option-button{% if option.name == 'Color' or option.name == 'Colour' %} is-color{% endif %}"
+                              {% if option.name == 'Color' or option.name == 'Colour' %}style="--swatch-color: {{ value | handleize }}"{% endif %}
+                            >
+                              {{ value }}
+                            </label>
+                          {%- endfor -%}
+                        </div>
+                      {%- else -%}
+                        <select 
+                          name="Option-{{ option.position }}"
+                          class="main-product__option-select"
+                        >
+                          {%- for value in option.values -%}
+                            <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
+                              {{ value }}
+                            </option>
+                          {%- endfor -%}
+                        </select>
+                      {%- endif -%}
+                    </div>
+                  {%- endfor -%}
+
+                  <script type="application/json" data-variants>
+                    {{ product.variants | json }}
+                  </script>
+                </variant-picker>
+              {%- endunless -%}
+
+            {%- when 'quantity_selector' -%}
+              <div class="main-product__quantity" {{ block.shopify_attributes }}>
+                <label for="Quantity-{{ section.id }}" class="main-product__quantity-label">
+                  {{ 'products.product.quantity.label' | t }}
+                </label>
+                <quantity-input class="quantity-input">
+                  <button type="button" class="quantity-input__button" name="minus" aria-label="{{ 'products.product.quantity.decrease' | t }}">
+                    {%- render 'icon-minus' -%}
+                  </button>
+                  <input
+                    type="number"
+                    id="Quantity-{{ section.id }}"
+                    name="quantity"
+                    class="quantity-input__field"
+                    value="1"
+                    min="1"
+                    aria-label="{{ 'products.product.quantity.label' | t }}"
+                  >
+                  <button type="button" class="quantity-input__button" name="plus" aria-label="{{ 'products.product.quantity.increase' | t }}">
+                    {%- render 'icon-plus' -%}
+                  </button>
+                </quantity-input>
+              </div>
+
+            {%- when 'buy_buttons' -%}
+              <div class="main-product__buy-buttons" {{ block.shopify_attributes }}>
+                <product-form class="main-product__form">
+                  {%- form 'product', product, id: 'ProductForm', class: 'form', novalidate: 'novalidate', data-type: settings.cart_type -%}
+                    <input type="hidden" name="id" value="{{ current_variant.id }}">
+                    
+                    <div class="main-product__form-buttons">
+                      <button 
+                        type="submit" 
+                        name="add"
+                        class="main-product__add-button button button--full-width"
+                        {% unless current_variant.available %}disabled{% endunless %}
+                      >
+                        <span class="main-product__add-button-text">
+                          {%- if current_variant.available -%}
+                            {{ 'products.product.add_to_cart' | t }}
+                          {%- else -%}
+                            {{ 'products.product.sold_out' | t }}
+                          {%- endif -%}
+                        </span>
+                        <span class="main-product__add-button-loading" hidden>
+                          {%- render 'icon-spinner' -%}
+                        </span>
+                      </button>
+
+                      {%- if block.settings.show_dynamic_checkout -%}
+                        {{ form | payment_button }}
+                      {%- endif -%}
+                    </div>
+                  {%- endform -%}
+                </product-form>
+              </div>
+
+            {%- when 'description' -%}
+              {%- if product.description != blank -%}
+                <div class="main-product__description rte" {{ block.shopify_attributes }}>
+                  {{ product.description }}
+                </div>
+              {%- endif -%}
+
+            {%- when 'collapsible_tab' -%}
+              <accordion-item class="main-product__accordion" {{ block.shopify_attributes }}>
+                <h3 class="main-product__accordion-header">
+                  <button 
+                    type="button" 
+                    class="main-product__accordion-button"
+                    aria-expanded="{% if block.settings.open_by_default %}true{% else %}false{% endif %}"
+                  >
+                    {%- if block.settings.icon != 'none' -%}
+                      <span class="main-product__accordion-icon">
+                        {%- case block.settings.icon -%}
+                          {%- when 'box' -%}{%- render 'icon-box' -%}
+                          {%- when 'truck' -%}{%- render 'icon-truck' -%}
+                          {%- when 'return' -%}{%- render 'icon-return' -%}
+                          {%- when 'heart' -%}{%- render 'icon-heart' -%}
+                          {%- when 'star' -%}{%- render 'icon-star' -%}
+                          {%- when 'shield' -%}{%- render 'icon-shield' -%}
+                          {%- when 'info' -%}{%- render 'icon-info' -%}
+                        {%- endcase -%}
+                      </span>
+                    {%- endif -%}
+                    <span>{{ block.settings.heading | default: 'Details' }}</span>
+                    <span class="main-product__accordion-toggle">
+                      {%- render 'icon-plus' -%}
+                    </span>
+                  </button>
+                </h3>
+                <div class="main-product__accordion-content rte" {% unless block.settings.open_by_default %}hidden{% endunless %}>
+                  {{ block.settings.content }}
+                  {{ block.settings.page.content }}
+                </div>
+              </accordion-item>
+
+            {%- when 'share' -%}
+              <div class="main-product__share" {{ block.shopify_attributes }}>
+                <span class="main-product__share-label">{{ 'products.product.share' | t }}:</span>
+                <div class="main-product__share-buttons">
+                  <a href="https://www.facebook.com/sharer.php?u={{ shop.url }}{{ product.url }}" target="_blank" rel="noopener" class="main-product__share-button" aria-label="Share on Facebook">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                    </svg>
+                  </a>
+                  <a href="https://twitter.com/intent/tweet?url={{ shop.url }}{{ product.url }}&text={{ product.title | url_encode }}" target="_blank" rel="noopener" class="main-product__share-button" aria-label="Share on X">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 4l11.733 16h4.267l-11.733 -16z"/>
+                      <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/>
+                    </svg>
+                  </a>
+                  <a href="https://pinterest.com/pin/create/button/?url={{ shop.url }}{{ product.url }}&media={{ product.featured_image | image_url: width: 1000 }}&description={{ product.title | url_encode }}" target="_blank" rel="noopener" class="main-product__share-button" aria-label="Share on Pinterest">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" x2="12" y1="17" y2="22"/>
+                      <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/>
+                    </svg>
+                  </a>
+                  <button type="button" class="main-product__share-button" data-copy-link aria-label="Copy link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+            {%- when 'trust_badges' -%}
+              <div class="main-product__trust" {{ block.shopify_attributes }}>
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'main-product__trust-image' }}
+                {%- else -%}
+                  <div class="main-product__trust-icons">
+                    <div class="main-product__trust-item">
+                      {%- render 'icon-shield' -%}
+                      <span>{{ 'products.product.secure_checkout' | t }}</span>
+                    </div>
+                    <div class="main-product__trust-item">
+                      {%- render 'icon-truck' -%}
+                      <span>{{ 'products.product.free_shipping' | t }}</span>
+                    </div>
+                    <div class="main-product__trust-item">
+                      {%- render 'icon-return' -%}
+                      <span>{{ 'products.product.easy_returns' | t }}</span>
+                    </div>
+                  </div>
+                {%- endif -%}
+              </div>
+
+            {%- when 'custom_liquid' -%}
+              <div class="main-product__custom" {{ block.shopify_attributes }}>
+                {{ block.settings.custom_liquid }}
+              </div>
+
+          {%- endcase -%}
+        {%- endfor -%}
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product information",
+  "tag": "section",
+  "class": "section section-main-product",
+  "settings": [
+    {
+      "type": "select",
+      "id": "product_style",
+      "label": "Product page style",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "ritual", "label": "Ritual (Luxury)" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "select",
+      "id": "gallery_layout",
+      "label": "Gallery layout",
+      "options": [
+        { "value": "thumbnails-left", "label": "Thumbnails left" },
+        { "value": "thumbnails-bottom", "label": "Thumbnails bottom" },
+        { "value": "stacked", "label": "Stacked" }
+      ],
+      "default": "thumbnails-left"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_zoom",
+      "label": "Enable image zoom",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Sticky add to cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_atc",
+      "label": "Enable sticky add to cart (mobile)",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "vendor",
+      "name": "Vendor",
+      "limit": 1
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1
+    },
+    {
+      "type": "rating",
+      "name": "Rating",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "variant_picker",
+      "name": "Variant picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "picker_type",
+          "label": "Picker type",
+          "options": [
+            { "value": "button", "label": "Buttons" },
+            { "value": "dropdown", "label": "Dropdown" }
+          ],
+          "default": "button"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_selected",
+          "label": "Show selected value",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "quantity_selector",
+      "name": "Quantity selector",
+      "limit": 1
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "label": "Show dynamic checkout buttons",
+          "default": true,
+          "info": "Using the payment methods available on your store, customers see their preferred option, like PayPal or Apple Pay."
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "collapsible_tab",
+      "name": "Collapsible tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Details"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "icon-box", "label": "Box" },
+            { "value": "icon-truck", "label": "Truck" },
+            { "value": "icon-return", "label": "Return" },
+            { "value": "icon-ruler", "label": "Ruler" },
+            { "value": "icon-shirt", "label": "Shirt" },
+            { "value": "icon-leaf", "label": "Leaf" },
+            { "value": "icon-heart", "label": "Heart" },
+            { "value": "icon-question", "label": "Question" }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Page content"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_by_default",
+          "label": "Open by default",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "share",
+      "name": "Share",
+      "limit": 1
+    },
+    {
+      "type": "trust_badges",
+      "name": "Trust badges",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom trust badges image"
+        }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Custom Liquid"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product information",
+      "blocks": [
+        { "type": "vendor" },
+        { "type": "title" },
+        { "type": "rating" },
+        { "type": "price" },
+        { "type": "variant_picker" },
+        { "type": "quantity_selector" },
+        { "type": "buy_buttons" },
+        { "type": "description" },
+        {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & Returns",
+            "icon": "icon-truck",
+            "content": "<p>Free shipping on orders over $100. Easy returns within 30 days.</p>"
+          }
+        },
+        { "type": "share" }
+      ]
+    }
+  ]
+}
+{% endschema %}

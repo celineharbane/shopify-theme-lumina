@@ -1,0 +1,177 @@
+{{ 'section-collection-product-grid.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign products_per_page = section.settings.products_per_page
+  assign desktop_columns = section.settings.desktop_columns
+  assign mobile_columns = section.settings.mobile_columns
+-%}
+
+<section
+  id="CollectionProductGrid-{{ section.id }}"
+  class="collection-product-grid"
+  data-section-id="{{ section.id }}"
+  data-section-type="collection-product-grid"
+>
+  <div class="page-width">
+
+    {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
+      <div class="collection-product-grid__toolbar">
+        {%- if section.settings.enable_filtering -%}
+          <div class="collection-product-grid__filter-toggle">
+            <button
+              type="button"
+              class="collection-filter-toggle button button--secondary"
+              data-filter-toggle
+            >
+              {%- render 'icons', icon: 'filter' -%}
+              <span>{{ 'products.facets.filter_button' | t }}</span>
+            </button>
+          </div>
+        {%- endif -%}
+
+        <div class="collection-product-grid__info">
+          <p class="collection-product-grid__count">
+            {{ 'products.facets.product_count' | t: count: collection.products_count }}
+          </p>
+        </div>
+
+        {%- if section.settings.enable_sorting -%}
+          <div class="collection-product-grid__sort">
+            <label for="SortBy" class="visually-hidden">{{ 'products.facets.sort_by' | t }}</label>
+            <select id="SortBy" class="collection-sort-select" data-sort-select>
+              {%- for option in collection.sort_options -%}
+                <option
+                  value="{{ option.value }}"
+                  {% if collection.sort_by == option.value %}selected{% endif %}
+                >
+                  {{ option.name }}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- paginate collection.products by products_per_page -%}
+      {%- if collection.products.size > 0 -%}
+        <ul
+          class="collection-product-grid__grid grid"
+          style="--desktop-columns: {{ desktop_columns }}; --mobile-columns: {{ mobile_columns }};"
+        >
+          {%- for product in collection.products -%}
+            <li class="collection-product-grid__item grid__item" data-aos="fade-up" data-aos-delay="{{ forloop.index0 | times: 50 | at_most: 300 }}">
+              {%- render 'product-card', product: product, show_vendor: section.settings.show_vendor, image_ratio: section.settings.image_ratio -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {%- if paginate.pages > 1 -%}
+          <div class="collection-product-grid__pagination">
+            {%- render 'pagination', paginate: paginate -%}
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <div class="collection-product-grid__empty">
+          <p>{{ 'collections.general.no_matches' | t }}</p>
+          <a href="{{ routes.all_products_collection_url }}" class="button">
+            {{ 'collections.general.view_all' | t }}
+          </a>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product grid",
+  "tag": "section",
+  "class": "section section-collection-product-grid",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desktop_columns",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "Columns on mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "header",
+      "content": "Filtering and sorting"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "label": "Enable filtering",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "filter_type",
+      "label": "Filter type",
+      "options": [
+        { "value": "drawer", "label": "Drawer" },
+        { "value": "sidebar", "label": "Sidebar" }
+      ],
+      "default": "drawer"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "label": "Enable sorting",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Product cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "landscape", "label": "Landscape (4:3)" }
+      ],
+      "default": "adapt"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animation",
+      "label": "Enable animation",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

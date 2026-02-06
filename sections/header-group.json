@@ -1,0 +1,21 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_width": 150,
+        "menu": "main-menu",
+        "sticky_header": true,
+        "show_search": true,
+        "show_account": true,
+        "header_style": "magazine",
+        "menu_style": "mega"
+      }
+    }
+  },
+  "order": [
+    "header"
+  ]
+}

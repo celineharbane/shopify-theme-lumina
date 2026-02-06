@@ -1,0 +1,425 @@
+{%- comment -%}
+  LUMINA Theme - Quick View Section
+  Renders product information in a modal for quick viewing
+{%- endcomment -%}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign featured_media = current_variant.featured_media | default: product.featured_media
+-%}
+
+<div class="quick-view__content">
+  <div class="quick-view__grid">
+
+    {%- comment -%} Product Media {%- endcomment -%}
+    <div class="quick-view__media">
+      {%- if featured_media -%}
+        <div class="quick-view__main-image">
+          {{ featured_media | image_url: width: 800 | image_tag:
+            loading: 'eager',
+            sizes: '(min-width: 750px) 400px, 100vw',
+            widths: '375, 550, 750, 800',
+            class: 'quick-view__image'
+          }}
+        </div>
+      {%- else -%}
+        <div class="quick-view__placeholder">
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Thumbnails {%- endcomment -%}
+      {%- if product.media.size > 1 -%}
+        <div class="quick-view__thumbnails">
+          {%- for media in product.media limit: 4 -%}
+            <button
+              type="button"
+              class="quick-view__thumbnail{% if media.id == featured_media.id %} is-active{% endif %}"
+              data-media-src="{{ media | image_url: width: 800 }}"
+            >
+              {{ media | image_url: width: 100 | image_tag: loading: 'lazy' }}
+            </button>
+          {%- endfor -%}
+          {%- if product.media.size > 4 -%}
+            <a href="{{ product.url }}" class="quick-view__more-media">
+              +{{ product.media.size | minus: 4 }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Badges {%- endcomment -%}
+      <div class="quick-view__badges">
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          {%- assign savings_percent = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round -%}
+          <span class="badge badge--sale">-{{ savings_percent }}%</span>
+        {%- endif -%}
+        {%- unless current_variant.available -%}
+          <span class="badge badge--soldout">{{ 'products.product.sold_out' | t }}</span>
+        {%- endunless -%}
+      </div>
+    </div>
+
+    {%- comment -%} Product Info {%- endcomment -%}
+    <div class="quick-view__info">
+
+      {%- comment -%} Vendor {%- endcomment -%}
+      {%- if product.vendor != blank -%}
+        <p class="quick-view__vendor">
+          <a href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
+        </p>
+      {%- endif -%}
+
+      {%- comment -%} Title {%- endcomment -%}
+      <h2 class="quick-view__title h3">
+        <a href="{{ product.url }}">{{ product.title }}</a>
+      </h2>
+
+      {%- comment -%} Rating {%- endcomment -%}
+      {%- if product.metafields.reviews.rating.value != blank -%}
+        <div class="quick-view__rating">
+          {%- assign rating = product.metafields.reviews.rating.value -%}
+          <div class="rating" role="img" aria-label="{{ 'accessibility.star_rating' | t: rating: rating, max: 5 }}">
+            {%- for i in (1..5) -%}
+              <span class="rating__star{% if i <= rating %} is-filled{% endif %}">
+                {%- render 'icon-star' -%}
+              </span>
+            {%- endfor -%}
+          </div>
+          {%- if product.metafields.reviews.rating_count.value != blank -%}
+            <span class="quick-view__rating-count">({{ product.metafields.reviews.rating_count.value }})</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Price {%- endcomment -%}
+      <div class="quick-view__price" data-product-price>
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          <span class="quick-view__price-compare">{{ current_variant.compare_at_price | money }}</span>
+        {%- endif -%}
+        <span class="quick-view__price-current{% if current_variant.compare_at_price > current_variant.price %} on-sale{% endif %}">
+          {{ current_variant.price | money }}
+        </span>
+      </div>
+
+      {%- comment -%} Short Description {%- endcomment -%}
+      {%- if product.description != blank -%}
+        <div class="quick-view__description">
+          {{ product.description | strip_html | truncate: 200 }}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Variant Picker {%- endcomment -%}
+      {%- unless product.has_only_default_variant -%}
+        <variant-picker class="quick-view__variants" data-url="{{ product.url }}">
+          {%- for option in product.options_with_values -%}
+            <div class="quick-view__option">
+              <label class="quick-view__option-label">
+                {{ option.name }}: <span class="quick-view__option-value">{{ option.selected_value }}</span>
+              </label>
+              <div class="quick-view__option-values">
+                {%- for value in option.values -%}
+                  <input
+                    type="radio"
+                    id="QuickView-Option-{{ option.position }}-{{ forloop.index }}"
+                    name="Option-{{ option.position }}"
+                    value="{{ value | escape }}"
+                    {% if option.selected_value == value %}checked{% endif %}
+                    class="visually-hidden"
+                  >
+                  <label
+                    for="QuickView-Option-{{ option.position }}-{{ forloop.index }}"
+                    class="quick-view__option-button{% if option.name == 'Color' or option.name == 'Colour' %} is-color{% endif %}"
+                    {% if option.name == 'Color' or option.name == 'Colour' %}style="--swatch-color: {{ value | handleize }}"{% endif %}
+                  >
+                    {{ value }}
+                  </label>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endfor -%}
+
+          <script type="application/json" data-variants>
+            {{ product.variants | json }}
+          </script>
+        </variant-picker>
+      {%- endunless -%}
+
+      {%- comment -%} Add to Cart Form {%- endcomment -%}
+      <product-form class="quick-view__form">
+        {%- form 'product', product, id: 'QuickViewForm', class: 'form', novalidate: 'novalidate' -%}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+          {%- comment -%} Quantity {%- endcomment -%}
+          <div class="quick-view__quantity-row">
+            <label for="QuickView-Quantity" class="visually-hidden">{{ 'products.product.quantity.label' | t }}</label>
+            <quantity-input class="quantity-input">
+              <button type="button" class="quantity-input__button" name="minus" aria-label="{{ 'products.product.quantity.decrease' | t }}">
+                {%- render 'icon-minus' -%}
+              </button>
+              <input
+                type="number"
+                id="QuickView-Quantity"
+                name="quantity"
+                class="quantity-input__field"
+                value="1"
+                min="1"
+                aria-label="{{ 'products.product.quantity.label' | t }}"
+              >
+              <button type="button" class="quantity-input__button" name="plus" aria-label="{{ 'products.product.quantity.increase' | t }}">
+                {%- render 'icon-plus' -%}
+              </button>
+            </quantity-input>
+          </div>
+
+          {%- comment -%} Add to Cart Button {%- endcomment -%}
+          <button
+            type="submit"
+            name="add"
+            class="quick-view__add-button button button--full-width"
+            {% unless current_variant.available %}disabled{% endunless %}
+          >
+            <span class="quick-view__add-button-text">
+              {%- if current_variant.available -%}
+                {{ 'products.product.add_to_cart' | t }}
+              {%- else -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- endif -%}
+            </span>
+            <span class="quick-view__add-button-loading" hidden>
+              {%- render 'icon-spinner' -%}
+            </span>
+          </button>
+        {%- endform -%}
+      </product-form>
+
+      {%- comment -%} View Full Details Link {%- endcomment -%}
+      <a href="{{ product.url }}" class="quick-view__full-details">
+        {{ 'products.product.view_full_details' | t | default: 'View full details' }}
+        {%- render 'icon-arrow-right' -%}
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .quick-view__content {
+    padding: 1.5rem;
+  }
+
+  .quick-view__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 750px) {
+    .quick-view__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .quick-view__media {
+    position: relative;
+  }
+
+  .quick-view__main-image {
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--border-radius, 8px);
+    background: var(--color-background-secondary);
+  }
+
+  .quick-view__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .quick-view__thumbnails {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .quick-view__thumbnail {
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .quick-view__thumbnail.is-active,
+  .quick-view__thumbnail:hover {
+    border-color: var(--color-primary);
+  }
+
+  .quick-view__thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .quick-view__badges {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .quick-view__vendor {
+    font-size: 0.875rem;
+    color: var(--color-text-light);
+    margin-bottom: 0.25rem;
+  }
+
+  .quick-view__vendor a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .quick-view__title {
+    margin: 0 0 0.5rem;
+  }
+
+  .quick-view__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .quick-view__title a:hover {
+    text-decoration: underline;
+  }
+
+  .quick-view__rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .quick-view__price {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+  }
+
+  .quick-view__price-compare {
+    text-decoration: line-through;
+    color: var(--color-text-light);
+    font-size: 1rem;
+  }
+
+  .quick-view__price-current.on-sale {
+    color: var(--color-accent);
+  }
+
+  .quick-view__description {
+    color: var(--color-text-light);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .quick-view__variants {
+    margin-bottom: 1.25rem;
+  }
+
+  .quick-view__option {
+    margin-bottom: 1rem;
+  }
+
+  .quick-view__option-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .quick-view__option-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .quick-view__option-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .quick-view__option-button:hover {
+    border-color: var(--color-primary);
+  }
+
+  input:checked + .quick-view__option-button {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-button-text);
+  }
+
+  .quick-view__option-button.is-color {
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--swatch-color);
+    font-size: 0;
+  }
+
+  .quick-view__quantity-row {
+    margin-bottom: 1rem;
+  }
+
+  .quick-view__form .quantity-input {
+    max-width: 120px;
+  }
+
+  .quick-view__add-button {
+    margin-bottom: 1rem;
+  }
+
+  .quick-view__full-details {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-primary);
+    font-size: 0.9375rem;
+    text-decoration: none;
+  }
+
+  .quick-view__full-details:hover {
+    text-decoration: underline;
+  }
+
+  .quick-view__full-details svg {
+    width: 1rem;
+    height: 1rem;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Quick view",
+  "tag": "section",
+  "class": "section-quick-view"
+}
+{% endschema %}

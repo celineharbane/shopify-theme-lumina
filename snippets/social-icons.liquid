@@ -1,0 +1,175 @@
+{%- comment -%}
+  Renders social media icons based on theme settings
+  
+  Accepts:
+  - class: {String} Additional class for the container (optional)
+{%- endcomment -%}
+
+{%- liquid
+  assign social_accounts = false
+  if settings.social_instagram != blank or settings.social_facebook != blank or settings.social_twitter != blank or settings.social_tiktok != blank or settings.social_pinterest != blank or settings.social_youtube != blank or settings.social_linkedin != blank or settings.social_snapchat != blank
+    assign social_accounts = true
+  endif
+-%}
+
+{%- if social_accounts -%}
+  <div class="social-icons{% if class %} {{ class }}{% endif %}">
+    {%- if settings.social_instagram != blank -%}
+      <a href="{{ settings.social_instagram }}" class="social-icons__link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+          <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+        </svg>
+      </a>
+    {%- endif -%}
+
+    {%- if settings.social_facebook != blank -%}
+      <a href="{{ settings.social_facebook }}" class="social-icons__link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+        </svg>
+      </a>
+    {%- endif -%}
+
+    {%- if settings.social_twitter != blank -%}
+      <a href="{{ settings.social_twitter }}" class="social-icons__link" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4l11.733 16h4.267l-11.733 -16z"/>
+          <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/>
+        </svg>
+      </a>
+    {%- endif -%}
+
+    {%- if settings.social_tiktok != blank -%}
+      <a href="{{ settings.social_tiktok }}" class="social-icons__link" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>
+        </svg>
+      </a>
+    {%- endif -%}
+
+    {%- if settings.social_pinterest != blank -%}
+      <a href="{{ settings.social_pinterest }}" class="social-icons__link" target="_blank" rel="noopener noreferrer" aria-label="Pinterest">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" x2="12" y1="17" y2="22"/>
+          <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/>
+        </svg>
+      </a>
+    {%- endif -%}
+
+    {%- if settings.social_youtube != blank -%}
+      <a href="{{ settings.social_youtube }}" class="social-icons__link" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/>
+          <path d="m10 15 5-3-5-3z"/>
+        </svg>
+      </a>
+    {%- endif -%}
+
+    {%- if settings.social_linkedin != blank -%}
+      <a href="{{ settings.social_linkedin }}" class="social-icons__link" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+          <rect width="4" height="12" x="2" y="9"/>
+          <circle cx="4" cy="4" r="2"/>
+        </svg>
+      </a>
+    {%- endif -%}
+
+    {%- if settings.social_snapchat != blank -%}
+      <a href="{{ settings.social_snapchat }}" class="social-icons__link" target="_blank" rel="noopener noreferrer" aria-label="Snapchat">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+          <path d="M12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+        </svg>
+      </a>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+<style>
+.social-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.social-icons__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-background-secondary);
+  color: var(--color-text);
+  transition: all var(--animation-duration) var(--animation-easing);
+}
+
+.social-icons__link:hover {
+  background: var(--color-primary);
+  color: var(--color-background);
+  transform: translateY(-2px);
+}
+
+.social-icons__link svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Size variants */
+.social-icons--small .social-icons__link {
+  width: 32px;
+  height: 32px;
+}
+
+.social-icons--small .social-icons__link svg {
+  width: 16px;
+  height: 16px;
+}
+
+.social-icons--large .social-icons__link {
+  width: 48px;
+  height: 48px;
+}
+
+.social-icons--large .social-icons__link svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Style variants */
+.social-icons--outline .social-icons__link {
+  background: transparent;
+  border: 1px solid var(--color-border);
+}
+
+.social-icons--outline .social-icons__link:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Dark mode / dark backgrounds */
+.color-scheme-dark .social-icons__link,
+.footer .social-icons__link {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-background);
+}
+
+.color-scheme-dark .social-icons__link:hover,
+.footer .social-icons__link:hover {
+  background: var(--color-background);
+  color: var(--color-heading);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-icons__link {
+    transition: none;
+  }
+
+  .social-icons__link:hover {
+    transform: none;
+  }
+}
+</style>

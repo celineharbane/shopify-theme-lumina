@@ -1,0 +1,39 @@
+/* Product Recommendations Section Styles */
+.product-recommendations {
+  padding: var(--section-spacing-vertical, 4rem) 0;
+}
+
+.product-recommendations__header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.product-recommendations__title {
+  margin: 0;
+}
+
+.product-recommendations__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 750px) {
+  .product-recommendations__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 990px) {
+  .product-recommendations__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+}
+
+.product-recommendations__placeholder {
+  text-align: center;
+  padding: 2rem;
+  color: var(--color-foreground-secondary, #6b7280);
+}

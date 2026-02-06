@@ -1,0 +1,75 @@
+{% comment %}
+  Generates CSS custom properties from theme settings
+{% endcomment %}
+
+{%- style -%}
+  {{ settings.font_heading | font_face: font_display: 'swap' }}
+  {{ settings.font_body | font_face: font_display: 'swap' }}
+
+  :root {
+    /* Colors */
+    --color-primary: {{ settings.color_primary }};
+    --color-secondary: {{ settings.color_secondary }};
+    --color-accent: {{ settings.color_accent }};
+    --color-background: {{ settings.color_background }};
+    --color-background-secondary: {{ settings.color_background_secondary }};
+    --color-text: {{ settings.color_text }};
+    --color-text-light: {{ settings.color_text_light }};
+    --color-button: {{ settings.color_button }};
+    --color-button-text: {{ settings.color_button_text }};
+    --color-button-hover: {{ settings.color_button_hover }};
+    --color-border: {{ settings.color_text | color_modify: 'alpha', 0.12 }};
+    --color-border-dark: {{ settings.color_text | color_modify: 'alpha', 0.2 }};
+    
+    /* RGB versions for rgba() usage */
+    --color-primary-rgb: {{ settings.color_primary | color_extract: 'red' }}, {{ settings.color_primary | color_extract: 'green' }}, {{ settings.color_primary | color_extract: 'blue' }};
+    --color-accent-rgb: {{ settings.color_accent | color_extract: 'red' }}, {{ settings.color_accent | color_extract: 'green' }}, {{ settings.color_accent | color_extract: 'blue' }};
+    --color-background-rgb: {{ settings.color_background | color_extract: 'red' }}, {{ settings.color_background | color_extract: 'green' }}, {{ settings.color_background | color_extract: 'blue' }};
+    --color-text-rgb: {{ settings.color_text | color_extract: 'red' }}, {{ settings.color_text | color_extract: 'green' }}, {{ settings.color_text | color_extract: 'blue' }};
+    
+    /* Typography */
+    --font-heading-family: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+    --font-heading-style: {{ settings.font_heading.style }};
+    --font-heading-weight: {{ settings.font_heading.weight }};
+    --font-heading-scale: {{ settings.font_heading_scale }};
+    
+    --font-body-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+    --font-body-style: {{ settings.font_body.style }};
+    --font-body-weight: {{ settings.font_body.weight }};
+    --font-body-scale: {{ settings.font_body_scale }};
+    
+    /* Layout */
+    --page-width: {{ settings.page_width }}px;
+    --spacing-sections: {{ settings.spacing_sections }}px;
+    --section-spacing: {{ settings.spacing_sections }}px;
+    --grid-gap: {{ settings.grid_gap }}px;
+    --border-radius: {{ settings.border_radius }}px;
+    --border-radius-large: {{ settings.border_radius | times: 2 }}px;
+
+    /* Animation */
+    --animation-duration: {{ settings.animation_duration }}ms;
+    --animation-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    /* Sale color */
+    --color-sale: #dc3545;
+    --color-heading: {{ settings.color_text }};
+
+    /* Header height (will be set by JS) */
+    --header-height: 80px;
+  }
+
+  /* High contrast mode adjustments */
+  @media (prefers-contrast: high) {
+    :root {
+      --color-border: {{ settings.color_text | color_modify: 'alpha', 0.3 }};
+    }
+  }
+
+  /* Dark color scheme detection */
+  {%- assign background_lightness = settings.color_background | color_extract: 'lightness' -%}
+  {%- if background_lightness < 50 -%}
+    :root {
+      color-scheme: dark;
+    }
+  {%- endif -%}
+{%- endstyle -%}

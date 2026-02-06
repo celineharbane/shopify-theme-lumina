@@ -1,0 +1,77 @@
+{%- comment -%}
+  Renders a testimonial card
+  
+  Accepts:
+  - block: {Object} Block with testimonial settings
+  - show_image: {Boolean} Show author photo
+  - show_rating: {Boolean} Show star rating
+  - compact: {Boolean} Compact version for carousel
+{%- endcomment -%}
+
+<article class="testimonial-card{% if compact %} testimonial-card--compact{% endif %}">
+  
+  {%- if show_rating and block.settings.rating -%}
+    <div class="testimonial-card__rating" aria-label="{{ 'accessibility.star_rating' | t: rating: block.settings.rating }}">
+      {%- for i in (1..5) -%}
+        <span class="testimonial-card__star{% if i <= block.settings.rating %} is-filled{% endif %}">
+          {%- render 'icon-star' -%}
+        </span>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- if block.settings.quote != blank -%}
+    <blockquote class="testimonial-card__quote">
+      <p>{{ block.settings.quote }}</p>
+    </blockquote>
+  {%- endif -%}
+
+  <footer class="testimonial-card__footer">
+    {%- if show_image and block.settings.image != blank -%}
+      <div class="testimonial-card__avatar">
+        {{
+          block.settings.image
+          | image_url: width: 120
+          | image_tag:
+            loading: 'lazy',
+            width: 60,
+            height: 60,
+            class: 'testimonial-card__avatar-image'
+        }}
+      </div>
+    {%- elsif show_image -%}
+      <div class="testimonial-card__avatar testimonial-card__avatar--placeholder">
+        <span>{{ block.settings.author | slice: 0 }}</span>
+      </div>
+    {%- endif -%}
+
+    <div class="testimonial-card__author">
+      {%- if block.settings.author != blank -%}
+        <cite class="testimonial-card__name">{{ block.settings.author }}</cite>
+      {%- endif -%}
+      {%- if block.settings.author_title != blank -%}
+        <span class="testimonial-card__title">{{ block.settings.author_title }}</span>
+      {%- endif -%}
+    </div>
+  </footer>
+
+  {%- if block.settings.product != blank -%}
+    {%- assign product = block.settings.product -%}
+    <a href="{{ product.url }}" class="testimonial-card__product">
+      {%- if product.featured_image != blank -%}
+        <div class="testimonial-card__product-image">
+          {{
+            product.featured_image
+            | image_url: width: 100
+            | image_tag:
+              loading: 'lazy',
+              width: 50,
+              height: 50
+          }}
+        </div>
+      {%- endif -%}
+      <span class="testimonial-card__product-title">{{ product.title }}</span>
+    </a>
+  {%- endif -%}
+
+</article>

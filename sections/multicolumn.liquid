@@ -1,0 +1,559 @@
+{{ 'section-multicolumn.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign columns_desktop = section.settings.columns_desktop
+  assign columns_mobile = section.settings.columns_mobile
+  assign image_ratio = section.settings.image_ratio
+  assign color_scheme = section.settings.color_scheme
+  assign text_alignment = section.settings.text_alignment
+-%}
+
+<section 
+  id="Multicolumn-{{ section.id }}"
+  class="multicolumn{% if color_scheme != 'none' %} color-scheme-{{ color_scheme }}{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="multicolumn"
+  style="
+    --columns-desktop: {{ columns_desktop }};
+    --columns-mobile: {{ columns_mobile }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="multicolumn__container page-width">
+    
+    {%- if section.settings.title != blank or section.settings.subheading != blank -%}
+      <div class="multicolumn__header text-{{ section.settings.header_alignment }}" data-aos="fade-up">
+        {%- if section.settings.subheading != blank -%}
+          <p class="multicolumn__subheading subheading">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="multicolumn__title h2">{{ section.settings.title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="multicolumn__description rte">{{ section.settings.description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="multicolumn__grid">
+      {%- for block in section.blocks -%}
+        <div 
+          class="multicolumn__item text-{{ text_alignment }}"
+          data-aos="fade-up"
+          data-aos-delay="{{ forloop.index0 | times: 100 }}"
+          {{ block.shopify_attributes }}
+        >
+          {%- case block.type -%}
+            
+            {%- when 'column' -%}
+              <div class="multicolumn__card">
+                {%- if block.settings.image != blank -%}
+                  <div class="multicolumn__media image-ratio-{{ image_ratio }}">
+                    {%- liquid
+                      assign image_height = block.settings.image.width | divided_by: block.settings.image.aspect_ratio
+                    -%}
+                    {{
+                      block.settings.image
+                      | image_url: width: 800
+                      | image_tag:
+                        loading: 'lazy',
+                        width: block.settings.image.width,
+                        height: image_height,
+                        sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+                        widths: '275, 375, 550, 750, 800',
+                        class: 'multicolumn__image'
+                    }}
+                  </div>
+                {%- elsif block.settings.icon != 'none' -%}
+                  <div class="multicolumn__icon">
+                    {%- case block.settings.icon -%}
+                      {%- when 'truck' -%}{%- render 'icon-truck' -%}
+                      {%- when 'return' -%}{%- render 'icon-return' -%}
+                      {%- when 'shield' -%}{%- render 'icon-shield' -%}
+                      {%- when 'phone' -%}{%- render 'icon-phone' -%}
+                      {%- when 'heart' -%}{%- render 'icon-heart' -%}
+                      {%- when 'star' -%}{%- render 'icon-star' -%}
+                      {%- when 'box' -%}{%- render 'icon-box' -%}
+                      {%- when 'gift' -%}{%- render 'icon-gift' -%}
+                    {%- endcase -%}
+                  </div>
+                {%- endif -%}
+
+                <div class="multicolumn__content">
+                  {%- if block.settings.title != blank -%}
+                    <h3 class="multicolumn__item-title h4">{{ block.settings.title }}</h3>
+                  {%- endif -%}
+                  
+                  {%- if block.settings.text != blank -%}
+                    <div class="multicolumn__text rte">{{ block.settings.text }}</div>
+                  {%- endif -%}
+                  
+                  {%- if block.settings.link_label != blank -%}
+                    <a href="{{ block.settings.link_url }}" class="multicolumn__link link-underline">
+                      {{ block.settings.link_label }}
+                      <span class="multicolumn__link-arrow">{%- render 'icon-arrow-right' -%}</span>
+                    </a>
+                  {%- endif -%}
+                </div>
+              </div>
+
+            {%- when 'icon_column' -%}
+              <div class="multicolumn__card multicolumn__card--icon">
+                <div class="multicolumn__icon-wrapper {% if block.settings.icon_style == 'circle' %}icon-style-circle{% elsif block.settings.icon_style == 'square' %}icon-style-square{% endif %}">
+                  {%- if block.settings.custom_icon != blank -%}
+                    <img 
+                      src="{{ block.settings.custom_icon | image_url: width: 100 }}" 
+                      alt="" 
+                      width="48" 
+                      height="48"
+                      loading="lazy"
+                      class="multicolumn__custom-icon"
+                    >
+                  {%- else -%}
+                    {%- case block.settings.icon -%}
+                      {%- when 'truck' -%}{%- render 'icon-truck' -%}
+                      {%- when 'return' -%}{%- render 'icon-return' -%}
+                      {%- when 'shield' -%}{%- render 'icon-shield' -%}
+                      {%- when 'phone' -%}{%- render 'icon-phone' -%}
+                      {%- when 'heart' -%}{%- render 'icon-heart' -%}
+                      {%- when 'star' -%}{%- render 'icon-star' -%}
+                      {%- when 'box' -%}{%- render 'icon-box' -%}
+                      {%- when 'gift' -%}{%- render 'icon-gift' -%}
+                    {%- endcase -%}
+                  {%- endif -%}
+                </div>
+
+                <div class="multicolumn__content">
+                  {%- if block.settings.title != blank -%}
+                    <h3 class="multicolumn__item-title h4">{{ block.settings.title }}</h3>
+                  {%- endif -%}
+                  
+                  {%- if block.settings.text != blank -%}
+                    <div class="multicolumn__text rte">{{ block.settings.text }}</div>
+                  {%- endif -%}
+                </div>
+              </div>
+
+            {%- when 'number_column' -%}
+              <div class="multicolumn__card multicolumn__card--number">
+                {%- if block.settings.number != blank -%}
+                  <div class="multicolumn__number">
+                    <span class="multicolumn__number-value" data-count-to="{{ block.settings.number | remove: ',' | remove: '+' | remove: '%' | remove: '$' | remove: '€' }}">
+                      {{ block.settings.number }}
+                    </span>
+                    {%- if block.settings.number_suffix != blank -%}
+                      <span class="multicolumn__number-suffix">{{ block.settings.number_suffix }}</span>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+
+                <div class="multicolumn__content">
+                  {%- if block.settings.title != blank -%}
+                    <h3 class="multicolumn__item-title h4">{{ block.settings.title }}</h3>
+                  {%- endif -%}
+                  
+                  {%- if block.settings.text != blank -%}
+                    <div class="multicolumn__text rte">{{ block.settings.text }}</div>
+                  {%- endif -%}
+                </div>
+              </div>
+
+          {%- endcase -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.button_label != blank -%}
+      <div class="multicolumn__footer text-center" data-aos="fade-up">
+        <a href="{{ section.settings.button_link }}" class="button">
+          {{ section.settings.button_label }}
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Multicolumn",
+  "tag": "section",
+  "class": "section section-multicolumn",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Multicolumn"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "natural", "label": "Natural" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "landscape", "label": "Landscape (4:3)" },
+        { "value": "circle", "label": "Circle" }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon (if no image)",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "return", "label": "Return" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "phone", "label": "Phone" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "star", "label": "Star" },
+            { "value": "box", "label": "Box" },
+            { "value": "gift", "label": "Gift" }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Column title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Description",
+          "default": "<p>Pair text with an image to focus on your chosen product, collection, or blog post.</p>"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link URL"
+        }
+      ]
+    },
+    {
+      "type": "icon_column",
+      "name": "Icon column",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "truck", "label": "Truck (shipping)" },
+            { "value": "return", "label": "Return" },
+            { "value": "shield", "label": "Shield (security)" },
+            { "value": "phone", "label": "Phone (support)" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "star", "label": "Star (quality)" },
+            { "value": "box", "label": "Box" },
+            { "value": "gift", "label": "Gift" }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom icon image",
+          "info": "Overrides icon selection"
+        },
+        {
+          "type": "select",
+          "id": "icon_style",
+          "label": "Icon style",
+          "options": [
+            { "value": "default", "label": "Default" },
+            { "value": "circle", "label": "Circle background" },
+            { "value": "square", "label": "Square background" }
+          ],
+          "default": "default"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Free Shipping"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Description",
+          "default": "<p>On orders over $100</p>"
+        }
+      ]
+    },
+    {
+      "type": "number_column",
+      "name": "Number/stat column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Number",
+          "default": "10,000+"
+        },
+        {
+          "type": "text",
+          "id": "number_suffix",
+          "label": "Suffix (optional)",
+          "info": "E.g., %, +, customers"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Label",
+          "default": "Happy Customers"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multicolumn",
+      "blocks": [
+        {
+          "type": "column",
+          "settings": {
+            "title": "Column one",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post.</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Column two",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post.</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Column three",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post.</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Column four",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post.</p>"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Features / Benefits",
+      "settings": {
+        "title": "Why Choose Us",
+        "columns_desktop": 4
+      },
+      "blocks": [
+        {
+          "type": "icon_column",
+          "settings": {
+            "icon": "truck",
+            "title": "Free Shipping",
+            "text": "<p>On orders over $100</p>"
+          }
+        },
+        {
+          "type": "icon_column",
+          "settings": {
+            "icon": "return",
+            "title": "Easy Returns",
+            "text": "<p>30-day return policy</p>"
+          }
+        },
+        {
+          "type": "icon_column",
+          "settings": {
+            "icon": "shield",
+            "title": "Secure Payment",
+            "text": "<p>100% secure checkout</p>"
+          }
+        },
+        {
+          "type": "icon_column",
+          "settings": {
+            "icon": "phone",
+            "title": "24/7 Support",
+            "text": "<p>Dedicated support team</p>"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Stats / Numbers",
+      "settings": {
+        "title": "By The Numbers",
+        "columns_desktop": 4
+      },
+      "blocks": [
+        {
+          "type": "number_column",
+          "settings": {
+            "number": "10,000+",
+            "title": "Happy Customers"
+          }
+        },
+        {
+          "type": "number_column",
+          "settings": {
+            "number": "500+",
+            "title": "Products"
+          }
+        },
+        {
+          "type": "number_column",
+          "settings": {
+            "number": "50+",
+            "title": "Countries"
+          }
+        },
+        {
+          "type": "number_column",
+          "settings": {
+            "number": "99%",
+            "title": "Satisfaction"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

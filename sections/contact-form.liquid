@@ -1,0 +1,233 @@
+{%- comment -%}
+  LUMINA Theme - Contact Form Section
+{%- endcomment -%}
+
+<section class="contact-form section-padding" data-section-id="{{ section.id }}">
+  <div class="page-width page-width--narrow">
+
+    {%- if section.settings.heading != blank -%}
+      <header class="contact-form__header">
+        <h2 class="contact-form__title h3">{{ section.settings.heading }}</h2>
+        {%- if section.settings.subheading != blank -%}
+          <p class="contact-form__subheading">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    {%- form 'contact', id: 'ContactForm', class: 'contact-form__form' -%}
+      {%- if form.posted_successfully? -%}
+        <div class="form-success">
+          {{ 'templates.contact.form.post_success' | t }}
+        </div>
+      {%- endif -%}
+
+      {%- if form.errors -%}
+        <div class="form-errors">
+          <h3>{{ 'templates.contact.form.error_heading' | t }}</h3>
+          {{ form.errors | default_errors }}
+        </div>
+      {%- endif -%}
+
+      <div class="contact-form__row">
+        <div class="contact-form__field">
+          <label for="ContactForm-name">{{ 'templates.contact.form.name' | t }} <span aria-hidden="true">*</span></label>
+          <input
+            type="text"
+            name="contact[{{ 'templates.contact.form.name' | t }}]"
+            id="ContactForm-name"
+            autocomplete="name"
+            value="{{ form.name }}"
+            required
+          >
+        </div>
+
+        <div class="contact-form__field">
+          <label for="ContactForm-email">{{ 'templates.contact.form.email' | t }} <span aria-hidden="true">*</span></label>
+          <input
+            type="email"
+            name="contact[email]"
+            id="ContactForm-email"
+            autocomplete="email"
+            autocapitalize="off"
+            value="{{ form.email }}"
+            required
+            {% if form.errors contains 'email' %}
+              aria-invalid="true"
+              aria-describedby="ContactForm-email-error"
+            {% endif %}
+          >
+        </div>
+      </div>
+
+      {%- if section.settings.show_phone -%}
+        <div class="contact-form__field">
+          <label for="ContactForm-phone">{{ 'templates.contact.form.phone' | t }}</label>
+          <input
+            type="tel"
+            name="contact[{{ 'templates.contact.form.phone' | t }}]"
+            id="ContactForm-phone"
+            autocomplete="tel"
+            value="{{ form.phone }}"
+          >
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_subject -%}
+        <div class="contact-form__field">
+          <label for="ContactForm-subject">{{ 'contact.form.subject' | t | default: 'Subject' }}</label>
+          <input
+            type="text"
+            name="contact[{{ 'contact.form.subject' | t | default: 'Subject' }}]"
+            id="ContactForm-subject"
+          >
+        </div>
+      {%- endif -%}
+
+      <div class="contact-form__field">
+        <label for="ContactForm-body">{{ 'templates.contact.form.comment' | t }} <span aria-hidden="true">*</span></label>
+        <textarea
+          name="contact[{{ 'templates.contact.form.comment' | t }}]"
+          id="ContactForm-body"
+          rows="6"
+          required
+        >{{ form.body }}</textarea>
+      </div>
+
+      <button type="submit" class="button button--primary contact-form__submit">
+        {{ 'templates.contact.form.send' | t }}
+      </button>
+    {%- endform -%}
+
+  </div>
+</section>
+
+<style>
+.contact-form__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contact-form__title {
+  margin: 0 0 0.5rem;
+}
+
+.contact-form__subheading {
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.contact-form__form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.contact-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .contact-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.contact-form__field {
+  margin-bottom: 1.25rem;
+}
+
+.contact-form__field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.contact-form__field label span {
+  color: var(--color-accent);
+}
+
+.contact-form__field input,
+.contact-form__field textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.contact-form__field input:focus,
+.contact-form__field textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+}
+
+.contact-form__submit {
+  width: 100%;
+}
+
+.form-success {
+  padding: 1rem;
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid #28a745;
+  border-radius: var(--border-radius);
+  color: #28a745;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.form-errors {
+  padding: 1rem;
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid #dc3545;
+  border-radius: var(--border-radius);
+  color: #dc3545;
+  margin-bottom: 1.5rem;
+}
+
+.form-errors h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+</style>
+
+{% schema %}
+{
+  "name": "Contact form",
+  "tag": "section",
+  "class": "section-contact-form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Contact Us"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Have a question? We'd love to hear from you."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "Show phone field",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subject",
+      "label": "Show subject field",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact form"
+    }
+  ]
+}
+{% endschema %}

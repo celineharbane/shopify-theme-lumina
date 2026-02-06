@@ -1,0 +1,139 @@
+{{ 'section-recently-viewed.css' | asset_url | stylesheet_tag }}
+
+<section class="recently-viewed section-{{ section.id }}-padding" data-recently-viewed>
+  <div class="page-width">
+    <div class="recently-viewed__header">
+      {% if section.settings.heading != blank %}
+        <h2 class="recently-viewed__title h2">{{ section.settings.heading }}</h2>
+      {% endif %}
+    </div>
+
+    <div class="recently-viewed__products product-grid" style="--columns-desktop: {{ section.settings.columns_desktop }}; --columns-mobile: {{ section.settings.columns_mobile }};" data-recently-viewed-products>
+      <!-- Products will be loaded via JavaScript -->
+    </div>
+
+    <div class="recently-viewed__empty" data-recently-viewed-empty hidden>
+      <p>{{ section.settings.empty_message }}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const container = document.querySelector('[data-recently-viewed-products]');
+    const emptyState = document.querySelector('[data-recently-viewed-empty]');
+    const section = document.querySelector('[data-recently-viewed]');
+
+    if (!container) return;
+
+    const maxProducts = {{ section.settings.products_to_show }};
+    const currentProductId = {{ product.id | default: 'null' }};
+
+    // Get recently viewed from localStorage
+    let recentlyViewed = JSON.parse(localStorage.getItem('lumina-recently-viewed') || '[]');
+
+    // Add current product if on product page
+    if (currentProductId && !recentlyViewed.includes(currentProductId)) {
+      recentlyViewed.unshift(currentProductId);
+      recentlyViewed = recentlyViewed.slice(0, 20); // Keep max 20
+      localStorage.setItem('lumina-recently-viewed', JSON.stringify(recentlyViewed));
+    }
+
+    // Remove current product from display
+    const productsToShow = recentlyViewed.filter(id => id !== currentProductId).slice(0, maxProducts);
+
+    if (productsToShow.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+
+    // Fetch products
+    const productPromises = productsToShow.map(id =>
+      fetch(`/products/${id}.json`)
+        .then(res => res.ok ? res.json() : null)
+        .catch(() => null)
+    );
+
+    Promise.all(productPromises).then(products => {
+      const validProducts = products.filter(p => p && p.product);
+
+      if (validProducts.length === 0) {
+        emptyState.hidden = false;
+        return;
+      }
+
+      validProducts.forEach(data => {
+        const product = data.product;
+        const card = document.createElement('div');
+        card.className = 'recently-viewed__item';
+        card.innerHTML = `
+          <a href="/products/${product.handle}" class="product-card">
+            <div class="product-card__image-wrapper">
+              ${product.images[0] ? `<img src="${product.images[0].src}" alt="${product.title}" class="product-card__image" loading="lazy">` : '<div class="product-card__placeholder"></div>'}
+            </div>
+            <div class="product-card__info">
+              <h3 class="product-card__title">${product.title}</h3>
+              <div class="product-card__price">${Shopify.formatMoney ? Shopify.formatMoney(product.variants[0].price) : '$' + (product.variants[0].price / 100).toFixed(2)}</div>
+            </div>
+          </a>
+        `;
+        container.appendChild(card);
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Recently viewed",
+  "tag": "section",
+  "class": "section-recently-viewed",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Recently Viewed",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "Products to show"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "Columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "2",
+      "label": "Columns on mobile"
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "default": "No recently viewed products",
+      "label": "Empty message"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Recently viewed"
+    }
+  ]
+}
+{% endschema %}

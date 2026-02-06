@@ -1,0 +1,428 @@
+{%- comment -%}
+  LUMINA Theme - Footer Section
+  Premium footer with multiple columns and customization
+{%- endcomment -%}
+
+{{ 'section-footer.css' | asset_url | stylesheet_tag }}
+
+<footer class="footer section-padding" role="contentinfo">
+  <div class="page-width">
+    {%- comment -%} Main Footer Content {%- endcomment -%}
+    <div class="footer__content">
+      {%- comment -%} Brand Column {%- endcomment -%}
+      <div class="footer__brand">
+        {%- if section.settings.logo != blank -%}
+          <a href="{{ routes.root_url }}" class="footer__logo">
+            {{ section.settings.logo | image_url: width: 300 | image_tag:
+              loading: 'lazy',
+              widths: '150, 200, 300',
+              sizes: '(max-width: 749px) 120px, 200px',
+              alt: shop.name
+            }}
+          </a>
+        {%- else -%}
+          <a href="{{ routes.root_url }}" class="footer__logo-text h4">
+            {{ shop.name }}
+          </a>
+        {%- endif -%}
+
+        {%- if section.settings.brand_description != blank -%}
+          <p class="footer__brand-text">{{ section.settings.brand_description }}</p>
+        {%- endif -%}
+
+        {%- comment -%} Social Links {%- endcomment -%}
+        {%- if section.settings.show_social -%}
+          <div class="footer__social">
+            {%- if settings.social_instagram_link != blank -%}
+              <a href="{{ settings.social_instagram_link }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="Instagram">
+                {% render 'icons', icon: 'instagram', size: 20 %}
+              </a>
+            {%- endif -%}
+            {%- if settings.social_facebook_link != blank -%}
+              <a href="{{ settings.social_facebook_link }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="Facebook">
+                {% render 'icons', icon: 'facebook', size: 20 %}
+              </a>
+            {%- endif -%}
+            {%- if settings.social_twitter_link != blank -%}
+              <a href="{{ settings.social_twitter_link }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="Twitter">
+                {% render 'icons', icon: 'twitter', size: 20 %}
+              </a>
+            {%- endif -%}
+            {%- if settings.social_tiktok_link != blank -%}
+              <a href="{{ settings.social_tiktok_link }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="TikTok">
+                {% render 'icons', icon: 'tiktok', size: 20 %}
+              </a>
+            {%- endif -%}
+            {%- if settings.social_pinterest_link != blank -%}
+              <a href="{{ settings.social_pinterest_link }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="Pinterest">
+                {% render 'icons', icon: 'pinterest', size: 20 %}
+              </a>
+            {%- endif -%}
+            {%- if settings.social_youtube_link != blank -%}
+              <a href="{{ settings.social_youtube_link }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="YouTube">
+                {% render 'icons', icon: 'youtube', size: 20 %}
+              </a>
+            {%- endif -%}
+            {%- if settings.social_linkedin_link != blank -%}
+              <a href="{{ settings.social_linkedin_link }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="LinkedIn">
+                {% render 'icons', icon: 'linkedin', size: 20 %}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Menu Columns {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'menu' -%}
+            <div class="footer__column" {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}
+                <h3 class="footer__heading h6">{{ block.settings.heading }}</h3>
+              {%- endif -%}
+              
+              {%- if block.settings.menu != blank -%}
+                <ul class="footer__menu" role="list">
+                  {%- for link in block.settings.menu.links -%}
+                    <li class="footer__menu-item">
+                      <a href="{{ link.url }}" class="footer__link">{{ link.title }}</a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+
+          {%- when 'newsletter' -%}
+            <div class="footer__column footer__column--newsletter" {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}
+                <h3 class="footer__heading h6">{{ block.settings.heading }}</h3>
+              {%- endif -%}
+              
+              {%- if block.settings.text != blank -%}
+                <p class="footer__newsletter-text">{{ block.settings.text }}</p>
+              {%- endif -%}
+
+              {%- form 'customer', id: 'footer-newsletter', class: 'footer__newsletter-form' -%}
+                <input type="hidden" name="contact[tags]" value="newsletter">
+                
+                {%- if form.posted_successfully? -%}
+                  <div class="footer__newsletter-success">
+                    {% render 'icons', icon: 'check', size: 20 %}
+                    <span>{{ 'newsletter.success' | t }}</span>
+                  </div>
+                {%- else -%}
+                  <div class="footer__newsletter-field">
+                    <input type="email" 
+                      name="contact[email]" 
+                      class="footer__newsletter-input"
+                      placeholder="{{ 'newsletter.email_placeholder' | t }}"
+                      autocomplete="email"
+                      required
+                      aria-label="{{ 'newsletter.email_placeholder' | t }}"
+                    >
+                    <button type="submit" class="footer__newsletter-btn btn btn--primary">
+                      <span class="btn__text">{{ 'newsletter.subscribe' | t }}</span>
+                      {% render 'icons', icon: 'arrow-right', size: 18 %}
+                    </button>
+                  </div>
+                  {%- if form.errors -%}
+                    <p class="footer__newsletter-error">{{ form.errors.messages.email }}</p>
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endform -%}
+
+              {%- if block.settings.privacy_text != blank -%}
+                <p class="footer__privacy-text">{{ block.settings.privacy_text }}</p>
+              {%- endif -%}
+            </div>
+
+          {%- when 'contact' -%}
+            <div class="footer__column" {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}
+                <h3 class="footer__heading h6">{{ block.settings.heading }}</h3>
+              {%- endif -%}
+              
+              <ul class="footer__contact" role="list">
+                {%- if block.settings.address != blank -%}
+                  <li class="footer__contact-item">
+                    {% render 'icons', icon: 'map-pin', size: 18 %}
+                    <span>{{ block.settings.address }}</span>
+                  </li>
+                {%- endif -%}
+                {%- if block.settings.phone != blank -%}
+                  <li class="footer__contact-item">
+                    {% render 'icons', icon: 'phone', size: 18 %}
+                    <a href="tel:{{ block.settings.phone | remove: ' ' }}">{{ block.settings.phone }}</a>
+                  </li>
+                {%- endif -%}
+                {%- if block.settings.email != blank -%}
+                  <li class="footer__contact-item">
+                    {% render 'icons', icon: 'email', size: 18 %}
+                    <a href="mailto:{{ block.settings.email }}">{{ block.settings.email }}</a>
+                  </li>
+                {%- endif -%}
+              </ul>
+
+              {%- if block.settings.hours != blank -%}
+                <div class="footer__hours">
+                  <strong>{{ 'footer.hours' | t }}</strong>
+                  <p>{{ block.settings.hours }}</p>
+                </div>
+              {%- endif -%}
+            </div>
+
+          {%- when 'text' -%}
+            <div class="footer__column" {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}
+                <h3 class="footer__heading h6">{{ block.settings.heading }}</h3>
+              {%- endif -%}
+              
+              {%- if block.settings.text != blank -%}
+                <div class="footer__text rte">{{ block.settings.text }}</div>
+              {%- endif -%}
+
+              {%- if block.settings.button_label != blank and block.settings.button_link != blank -%}
+                <a href="{{ block.settings.button_link }}" class="footer__btn btn btn--secondary btn--small">
+                  {{ block.settings.button_label }}
+                </a>
+              {%- endif -%}
+            </div>
+
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} Footer Bottom {%- endcomment -%}
+    <div class="footer__bottom">
+      <div class="footer__bottom-left">
+        {%- comment -%} Copyright {%- endcomment -%}
+        <p class="footer__copyright">
+          &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}.
+          {{ 'footer.copyright' | t }}
+        </p>
+
+        {%- comment -%} Legal Links {%- endcomment -%}
+        {%- if section.settings.legal_menu != blank -%}
+          <nav class="footer__legal" aria-label="{{ 'accessibility.footer_legal' | t }}">
+            {%- for link in section.settings.legal_menu.links -%}
+              <a href="{{ link.url }}" class="footer__legal-link">{{ link.title }}</a>
+            {%- endfor -%}
+          </nav>
+        {%- endif -%}
+      </div>
+
+      <div class="footer__bottom-right">
+        {%- comment -%} Payment Icons {%- endcomment -%}
+        {%- if section.settings.show_payment_icons -%}
+          <div class="footer__payment">
+            {%- for type in shop.enabled_payment_types -%}
+              {{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Country/Currency Selector {%- endcomment -%}
+        {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
+          <div class="footer__localization">
+            {%- form 'localization', id: 'footer-country-form', class: 'footer__country-form' -%}
+              <label for="footer-country-selector" class="visually-hidden">{{ 'localization.country_label' | t }}</label>
+              <select id="footer-country-selector" name="country_code" class="footer__country-select" onchange="this.form.submit()">
+                {%- for country in localization.available_countries -%}
+                  <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+                    {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                  </option>
+                {%- endfor -%}
+              </select>
+              {% render 'icons', icon: 'chevron-down', size: 16 %}
+            {%- endform -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "tag": "section",
+  "class": "footer-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "textarea",
+      "id": "brand_description",
+      "label": "Brand description",
+      "default": "Crafted with passion. Designed for you."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social media links",
+      "default": true,
+      "info": "Configure links in Theme Settings > Social media"
+    },
+    {
+      "type": "header",
+      "content": "Footer bottom"
+    },
+    {
+      "type": "link_list",
+      "id": "legal_menu",
+      "label": "Legal menu",
+      "info": "Privacy policy, Terms of service, etc."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_selector",
+      "label": "Show country/region selector",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Quick links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Subscribe"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Description",
+          "default": "Get the latest updates and exclusive offers."
+        },
+        {
+          "type": "text",
+          "id": "privacy_text",
+          "label": "Privacy text",
+          "default": "We respect your privacy."
+        }
+      ]
+    },
+    {
+      "type": "contact",
+      "name": "Contact info",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Contact us"
+        },
+        {
+          "type": "text",
+          "id": "address",
+          "label": "Address"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "Phone"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "Email"
+        },
+        {
+          "type": "text",
+          "id": "hours",
+          "label": "Business hours"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Rich text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "menu",
+        "settings": {
+          "heading": "Shop"
+        }
+      },
+      {
+        "type": "menu",
+        "settings": {
+          "heading": "Company"
+        }
+      },
+      {
+        "type": "contact",
+        "settings": {
+          "heading": "Contact"
+        }
+      },
+      {
+        "type": "newsletter",
+        "settings": {
+          "heading": "Newsletter"
+        }
+      }
+    ]
+  }
+}
+{% endschema %}

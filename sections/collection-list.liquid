@@ -1,0 +1,302 @@
+{{ 'section-collection-list.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign columns_desktop = section.settings.columns_desktop
+  assign columns_mobile = section.settings.columns_mobile
+  assign image_ratio = section.settings.image_ratio
+-%}
+
+<section 
+  id="CollectionList-{{ section.id }}"
+  class="collection-list{% if section.settings.color_scheme != 'none' %} color-scheme-{{ section.settings.color_scheme }}{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="collection-list"
+  style="
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    --columns-desktop: {{ columns_desktop }};
+    --columns-mobile: {{ columns_mobile }};
+  "
+>
+  <div class="collection-list__container page-width">
+    
+    {%- if section.settings.title != blank or section.settings.subheading != blank -%}
+      <div class="collection-list__header text-{{ section.settings.header_alignment }}" data-aos="fade-up">
+        {%- if section.settings.subheading != blank -%}
+          <p class="collection-list__subheading subheading">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="collection-list__title h2">{{ section.settings.title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="collection-list__description rte">{{ section.settings.description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="collection-list__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign collection = block.settings.collection
+          assign custom_image = block.settings.image
+          assign image = custom_image | default: collection.image | default: collection.products.first.featured_image
+        -%}
+        
+        <div 
+          class="collection-list__item"
+          data-aos="fade-up"
+          data-aos-delay="{{ forloop.index0 | times: 100 }}"
+          {{ block.shopify_attributes }}
+        >
+          <a href="{{ collection.url | default: '#' }}" class="collection-list__card card-style-{{ section.settings.card_style }}">
+            <div class="collection-list__media image-ratio-{{ image_ratio }}">
+              {%- if image != blank -%}
+                {{
+                  image
+                  | image_url: width: 800
+                  | image_tag:
+                    loading: 'lazy',
+                    sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+                    widths: '275, 375, 550, 750, 800',
+                    class: 'collection-list__image'
+                }}
+              {%- else -%}
+                <div class="collection-list__placeholder">
+                  {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              {%- endif -%}
+              
+              {%- if section.settings.card_style == 'overlay' -%}
+                <div class="collection-list__overlay"></div>
+              {%- endif -%}
+            </div>
+
+            <div class="collection-list__content">
+              <h3 class="collection-list__name h4">
+                {{ block.settings.title | default: collection.title | default: 'Collection' }}
+              </h3>
+              
+              {%- if section.settings.show_count and collection != blank -%}
+                <p class="collection-list__count">
+                  {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
+                </p>
+              {%- endif -%}
+
+              {%- if section.settings.show_button -%}
+                <span class="collection-list__button">
+                  {{ section.settings.button_label | default: 'Shop Now' }}
+                  {%- render 'icon-arrow-right' -%}
+                </span>
+              {%- endif -%}
+            </div>
+          </a>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.view_all_link != blank and section.settings.view_all_label != blank -%}
+      <div class="collection-list__footer text-center" data-aos="fade-up">
+        <a href="{{ section.settings.view_all_link }}" class="button button--secondary">
+          {{ section.settings.view_all_label }}
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection list",
+  "tag": "section",
+  "class": "section section-collection-list",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop by Category"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "landscape", "label": "Landscape (4:3)" },
+        { "value": "wide", "label": "Wide (16:9)" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Card style",
+      "options": [
+        { "value": "standard", "label": "Standard (text below)" },
+        { "value": "overlay", "label": "Overlay (text on image)" }
+      ],
+      "default": "overlay"
+    },
+    {
+      "type": "header",
+      "content": "Card content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "Show product count",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "header",
+      "content": "View all"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View all link"
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "View all label",
+      "default": "View All Collections"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Custom title",
+          "info": "Overrides collection title"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom image",
+          "info": "Overrides collection image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection list",
+      "blocks": [
+        { "type": "collection" },
+        { "type": "collection" },
+        { "type": "collection" },
+        { "type": "collection" }
+      ]
+    }
+  ]
+}
+{% endschema %}

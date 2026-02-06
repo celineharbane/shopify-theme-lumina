@@ -1,0 +1,601 @@
+/* ============================================
+   LUMINA THEME - Animations
+   ============================================ */
+
+/* Scroll Reveal Animations
+   -------------------------------------------- */
+[data-animate] {
+  opacity: 0;
+  transition: opacity var(--animation-duration) ease,
+              transform var(--animation-duration) ease;
+}
+
+[data-animate].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Fade animation */
+[data-animate="fade"] {
+  opacity: 0;
+}
+
+/* Slide up animation */
+[data-animate="slide-up"] {
+  transform: translateY(30px);
+}
+
+/* Slide down animation */
+[data-animate="slide-down"] {
+  transform: translateY(-30px);
+}
+
+/* Slide left animation */
+[data-animate="slide-left"] {
+  transform: translateX(30px);
+}
+
+/* Slide right animation */
+[data-animate="slide-right"] {
+  transform: translateX(-30px);
+}
+
+/* Zoom animation */
+[data-animate="zoom"] {
+  transform: scale(0.95);
+}
+
+/* Stagger children */
+[data-animate-stagger] > * {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+[data-animate-stagger].is-visible > *:nth-child(1) { transition-delay: 0ms; }
+[data-animate-stagger].is-visible > *:nth-child(2) { transition-delay: 100ms; }
+[data-animate-stagger].is-visible > *:nth-child(3) { transition-delay: 200ms; }
+[data-animate-stagger].is-visible > *:nth-child(4) { transition-delay: 300ms; }
+[data-animate-stagger].is-visible > *:nth-child(5) { transition-delay: 400ms; }
+[data-animate-stagger].is-visible > *:nth-child(6) { transition-delay: 500ms; }
+[data-animate-stagger].is-visible > *:nth-child(7) { transition-delay: 600ms; }
+[data-animate-stagger].is-visible > *:nth-child(8) { transition-delay: 700ms; }
+
+[data-animate-stagger].is-visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hover Animations
+   -------------------------------------------- */
+
+/* Image zoom on hover */
+.hover-zoom {
+  overflow: hidden;
+}
+
+.hover-zoom img {
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.hover-zoom:hover img {
+  transform: scale(1.05);
+}
+
+/* Button lift effect */
+.hover-lift {
+  transition: transform var(--animation-duration) ease,
+              box-shadow var(--animation-duration) ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(var(--color-text-rgb), 0.12);
+}
+
+/* Underline slide effect */
+.hover-underline {
+  position: relative;
+}
+
+.hover-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  transition: width var(--animation-duration) ease;
+}
+
+.hover-underline:hover::after {
+  width: 100%;
+}
+
+/* Color shift effect */
+.hover-color {
+  transition: color var(--animation-duration) ease;
+}
+
+.hover-color:hover {
+  color: var(--color-accent);
+}
+
+/* Loading States
+   -------------------------------------------- */
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-background-secondary) 25%,
+    rgba(var(--color-text-rgb), 0.05) 50%,
+    var(--color-background-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: var(--border-radius);
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton--text {
+  height: 1.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.skeleton--text:last-child {
+  width: 60%;
+}
+
+.skeleton--image {
+  padding-bottom: 100%;
+}
+
+.skeleton--button {
+  height: 4.8rem;
+  width: 100%;
+}
+
+/* Spinner */
+.spinner {
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner--large {
+  width: 4rem;
+  height: 4rem;
+  border-width: 3px;
+}
+
+.spinner--small {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+/* Pulse animation */
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Marquee
+   -------------------------------------------- */
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee__content {
+  display: inline-flex;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee:hover .marquee__content {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Modal Animations
+   -------------------------------------------- */
+.modal {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--animation-duration) ease,
+              visibility var(--animation-duration) ease;
+}
+
+.modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal__content {
+  transform: translateY(20px) scale(0.98);
+  transition: transform var(--animation-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.modal.is-open .modal__content {
+  transform: translateY(0) scale(1);
+}
+
+/* Drawer Animations
+   -------------------------------------------- */
+.drawer {
+  transform: translateX(100%);
+  transition: transform var(--animation-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.drawer--left {
+  transform: translateX(-100%);
+}
+
+.drawer.is-open {
+  transform: translateX(0);
+}
+
+/* Accordion
+   -------------------------------------------- */
+.accordion__content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--animation-duration) ease;
+}
+
+.accordion__content > div {
+  overflow: hidden;
+}
+
+.accordion.is-open .accordion__content {
+  grid-template-rows: 1fr;
+}
+
+.accordion__icon {
+  transition: transform var(--animation-duration) ease;
+}
+
+.accordion.is-open .accordion__icon {
+  transform: rotate(180deg);
+}
+
+/* Tabs
+   -------------------------------------------- */
+.tabs__indicator {
+  transition: transform var(--animation-duration) ease,
+              width var(--animation-duration) ease;
+}
+
+.tab-content {
+  opacity: 0;
+  transform: translateX(10px);
+  position: absolute;
+  visibility: hidden;
+}
+
+.tab-content.is-active {
+  opacity: 1;
+  transform: translateX(0);
+  position: relative;
+  visibility: visible;
+  transition: opacity var(--animation-duration) ease,
+              transform var(--animation-duration) ease;
+}
+
+/* Cart Badge Counter
+   -------------------------------------------- */
+.cart-count {
+  transition: transform var(--animation-duration) ease;
+}
+
+.cart-count.is-updating {
+  animation: cart-bounce 0.4s ease;
+}
+
+@keyframes cart-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+}
+
+/* Toast Notifications
+   -------------------------------------------- */
+.toast {
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform var(--animation-duration) ease,
+              opacity var(--animation-duration) ease;
+}
+
+.toast.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast.is-leaving {
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
+/* Product Image Gallery
+   -------------------------------------------- */
+.gallery__main-image {
+  transition: opacity 0.3s ease;
+}
+
+.gallery__main-image.is-changing {
+  opacity: 0;
+}
+
+.gallery__thumbnail {
+  opacity: 0.6;
+  transition: opacity var(--animation-duration) ease,
+              border-color var(--animation-duration) ease;
+}
+
+.gallery__thumbnail.is-active,
+.gallery__thumbnail:hover {
+  opacity: 1;
+}
+
+/* Page Transitions (optional)
+   -------------------------------------------- */
+.page-transition {
+  animation: page-fade-in 0.4s ease;
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   RITUAL STYLE - Luxury Animations
+   ============================================ */
+
+/* Luxury Easing Functions */
+:root {
+  --ease-luxury: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Reveal Animation (Luxury style) */
+[data-animate="reveal"] {
+  opacity: 0;
+  clip-path: inset(100% 0 0 0);
+  transition: opacity 0.6s var(--ease-luxury),
+              clip-path 0.6s var(--ease-luxury);
+}
+
+[data-animate="reveal"].is-visible {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+}
+
+/* Image Reveal Effect */
+.image-reveal {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-reveal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-background);
+  transform: scaleX(1);
+  transform-origin: right;
+  transition: transform 0.8s var(--ease-luxury);
+}
+
+.image-reveal.is-visible::after {
+  transform: scaleX(0);
+}
+
+/* Line Draw Animation */
+.line-draw {
+  position: relative;
+}
+
+.line-draw::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-luxury);
+}
+
+.line-draw:hover::after,
+.line-draw.is-active::after {
+  transform: scaleX(1);
+}
+
+/* Button Luxury Effect */
+.button-luxury {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.button-luxury::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-accent);
+  transform: translateY(100%);
+  transition: transform 0.4s var(--ease-luxury);
+  z-index: -1;
+}
+
+.button-luxury:hover::before {
+  transform: translateY(0);
+}
+
+/* Card Lift Luxury */
+.card-lift-luxury {
+  transition: transform 0.5s var(--ease-luxury),
+              box-shadow 0.5s var(--ease-luxury);
+}
+
+.card-lift-luxury:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 30px 60px rgba(var(--color-text-rgb), 0.15);
+}
+
+/* Image Hover Zoom Luxury */
+.image-hover-zoom {
+  overflow: hidden;
+}
+
+.image-hover-zoom img {
+  transition: transform 0.8s var(--ease-luxury);
+}
+
+.image-hover-zoom:hover img {
+  transform: scale(1.08);
+}
+
+/* Text Reveal Animation */
+.text-reveal {
+  overflow: hidden;
+}
+
+.text-reveal span {
+  display: inline-block;
+  transform: translateY(100%);
+  transition: transform 0.6s var(--ease-luxury);
+}
+
+.text-reveal.is-visible span {
+  transform: translateY(0);
+}
+
+/* Stagger with longer delays for luxury feel */
+[data-animate-stagger-slow] > * {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+[data-animate-stagger-slow].is-visible > *:nth-child(1) { transition-delay: 0ms; }
+[data-animate-stagger-slow].is-visible > *:nth-child(2) { transition-delay: 150ms; }
+[data-animate-stagger-slow].is-visible > *:nth-child(3) { transition-delay: 300ms; }
+[data-animate-stagger-slow].is-visible > *:nth-child(4) { transition-delay: 450ms; }
+[data-animate-stagger-slow].is-visible > *:nth-child(5) { transition-delay: 600ms; }
+[data-animate-stagger-slow].is-visible > *:nth-child(6) { transition-delay: 750ms; }
+
+[data-animate-stagger-slow].is-visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Parallax */
+[data-parallax] {
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
+/* Cursor Effect for Luxury Feel */
+.cursor-pointer-luxury {
+  cursor: pointer;
+}
+
+/* Shimmer Loading Effect */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-background-secondary) 25%,
+    var(--color-background) 50%,
+    var(--color-background-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Fade in with scale */
+[data-animate="fade-scale"] {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.5s var(--ease-luxury),
+              transform 0.5s var(--ease-luxury);
+}
+
+[data-animate="fade-scale"].is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Reduced Motion
+   -------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  [data-animate],
+  [data-animate-stagger] > * {
+    opacity: 1;
+    transform: none;
+  }
+  
+  .hover-zoom img {
+    transform: none;
+  }
+  
+  .hover-lift:hover {
+    transform: none;
+  }
+  
+  .marquee__content {
+    animation: none;
+  }
+}

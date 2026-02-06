@@ -1,0 +1,101 @@
+{{ 'section-customer.css' | asset_url | stylesheet_tag }}
+
+<section class="customer customer--account" data-section-id="{{ section.id }}">
+  <div class="customer__container page-width">
+    
+    <div class="customer__account-header" data-aos="fade-up">
+      <h1 class="h2">{{ 'customer.account.title' | t }}</h1>
+      <a href="{{ routes.account_logout_url }}" class="button button--outline button--small">
+        {{ 'customer.account.logout' | t }}
+      </a>
+    </div>
+
+    <div class="customer__account-grid">
+      
+      {%- comment -%} Orders Section {%- endcomment -%}
+      <div class="customer__section customer__orders-section" data-aos="fade-up">
+        <h2 class="customer__section-title">{{ 'customer.orders.title' | t }}</h2>
+        
+        {%- if customer.orders.size > 0 -%}
+          <div class="customer__orders">
+            <table class="customer__orders-table">
+              <thead>
+                <tr>
+                  <th>{{ 'customer.orders.order_number' | t }}</th>
+                  <th>{{ 'customer.orders.date' | t }}</th>
+                  <th>{{ 'customer.orders.payment_status' | t }}</th>
+                  <th>{{ 'customer.orders.fulfillment_status' | t }}</th>
+                  <th>{{ 'customer.orders.total' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr>
+                    <td>
+                      <a href="{{ order.customer_url }}">{{ order.name }}</a>
+                    </td>
+                    <td>{{ order.created_at | date: format: 'date' }}</td>
+                    <td>{{ order.financial_status_label }}</td>
+                    <td>
+                      <span class="customer__order-status customer__order-status--{{ order.fulfillment_status }}">
+                        {{ order.fulfillment_status_label | default: 'Unfulfilled' }}
+                      </span>
+                    </td>
+                    <td>{{ order.total_price | money }}</td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+        {%- else -%}
+          <div class="customer__no-orders">
+            <p>{{ 'customer.orders.none' | t }}</p>
+            <a href="{{ routes.all_products_collection_url }}" class="button">
+              {{ 'customer.orders.browse' | t }}
+            </a>
+          </div>
+        {%- endif -%}
+
+        {%- paginate customer.orders by 20 -%}
+          {%- if paginate.pages > 1 -%}
+            <div class="customer__pagination">
+              {{ paginate | default_pagination }}
+            </div>
+          {%- endif -%}
+        {%- endpaginate -%}
+      </div>
+
+      {%- comment -%} Account Info Section {%- endcomment -%}
+      <div class="customer__info-column" data-aos="fade-up" data-aos-delay="100">
+        <div class="customer__section">
+          <h2 class="customer__section-title">{{ 'customer.account.details' | t }}</h2>
+          <div class="customer__address">
+            <p><strong>{{ customer.name }}</strong></p>
+            <p>{{ customer.email }}</p>
+          </div>
+        </div>
+
+        {%- if customer.default_address -%}
+          <div class="customer__section">
+            <h2 class="customer__section-title">{{ 'customer.account.default_address' | t }}</h2>
+            <div class="customer__address">
+              {{ customer.default_address | format_address }}
+            </div>
+            <a href="{{ routes.account_addresses_url }}" class="link link--underline" style="display: inline-block; margin-top: 1rem; font-size: 0.875rem;">
+              {{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Account",
+  "tag": "section",
+  "class": "section section-customer"
+}
+{% endschema %}

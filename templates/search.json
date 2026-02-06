@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-search",
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "image_ratio": "portrait",
+        "show_vendor": true,
+        "show_secondary_image": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

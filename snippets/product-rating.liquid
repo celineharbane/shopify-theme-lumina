@@ -1,0 +1,51 @@
+{%- comment -%}
+  Product Rating Snippet
+
+  Accepts:
+  - product: {Object} Shopify product object
+  - show_count: {Boolean} Show review count (optional, defaults to true)
+{%- endcomment -%}
+
+{%- liquid
+  assign show_count = show_count | default: true
+  assign rating = product.metafields.reviews.rating.value
+  assign rating_count = product.metafields.reviews.rating_count.value
+-%}
+
+{%- if rating -%}
+  <div class="product-rating" role="img" aria-label="{{ 'accessibility.star_rating' | t: rating: rating }}">
+    <div class="product-rating__stars">
+      {%- assign rating_value = rating | round: 1 -%}
+      {%- assign full_stars = rating_value | floor -%}
+      {%- assign partial_star = rating_value | modulo: 1 -%}
+      {%- assign empty_stars = 5 | minus: full_stars -%}
+      {%- if partial_star > 0 -%}
+        {%- assign empty_stars = empty_stars | minus: 1 -%}
+      {%- endif -%}
+
+      {%- for i in (1..full_stars) -%}
+        <span class="product-rating__star product-rating__star--full">
+          {%- render 'icons', icon: 'star-filled', size: 14 -%}
+        </span>
+      {%- endfor -%}
+
+      {%- if partial_star > 0 -%}
+        <span class="product-rating__star product-rating__star--partial">
+          {%- render 'icons', icon: 'star-half', size: 14 -%}
+        </span>
+      {%- endif -%}
+
+      {%- for i in (1..empty_stars) -%}
+        <span class="product-rating__star product-rating__star--empty">
+          {%- render 'icons', icon: 'star', size: 14 -%}
+        </span>
+      {%- endfor -%}
+    </div>
+
+    {%- if show_count and rating_count -%}
+      <span class="product-rating__count">
+        ({{ rating_count }})
+      </span>
+    {%- endif -%}
+  </div>
+{%- endif -%}

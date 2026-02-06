@@ -1,0 +1,177 @@
+{%- comment -%}
+  LUMINA Theme - Product Card Snippet
+  
+  Accepts:
+  - product: {Object} Shopify product object
+  - show_vendor: {Boolean} Show vendor name
+  - show_rating: {Boolean} Show product rating (optional, defaults to theme setting)
+  - show_quick_add: {Boolean} Show quick add button (optional, defaults to theme setting)
+  - lazy_load: {Boolean} Lazy load images (optional, defaults to true)
+  - image_ratio: {String} Image aspect ratio (optional, defaults to theme setting)
+{%- endcomment -%}
+
+{%- liquid
+  assign show_vendor = show_vendor | default: settings.product_show_vendor
+  assign show_rating = show_rating | default: settings.product_show_rating
+  assign show_quick_add = show_quick_add | default: settings.product_quick_add
+  assign lazy_load = lazy_load | default: true
+  assign image_ratio = image_ratio | default: settings.product_image_ratio
+  
+  assign current_variant = product.selected_or_first_available_variant
+  assign featured_image = product.featured_media
+  assign secondary_image = product.media[1]
+  
+  assign on_sale = false
+  if current_variant.compare_at_price > current_variant.price
+    assign on_sale = true
+    assign sale_percentage = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round
+  endif
+-%}
+
+<article class="product-card" data-product-id="{{ product.id }}">
+  {%- comment -%} Card Link {%- endcomment -%}
+  <a href="{{ product.url }}" class="product-card__link" aria-label="{{ product.title | escape }}">
+    <span class="visually-hidden">{{ product.title }}</span>
+  </a>
+  
+  {%- comment -%} Media {%- endcomment -%}
+  <div class="product-card__media product-card__media--{{ image_ratio }}">
+    {%- if featured_image -%}
+      <img 
+        srcset="{%- if featured_image.width >= 165 -%}{{ featured_image | image_url: width: 165 }} 165w,{%- endif -%}
+               {%- if featured_image.width >= 360 -%}{{ featured_image | image_url: width: 360 }} 360w,{%- endif -%}
+               {%- if featured_image.width >= 533 -%}{{ featured_image | image_url: width: 533 }} 533w,{%- endif -%}
+               {%- if featured_image.width >= 720 -%}{{ featured_image | image_url: width: 720 }} 720w,{%- endif -%}
+               {%- if featured_image.width >= 940 -%}{{ featured_image | image_url: width: 940 }} 940w,{%- endif -%}
+               {{ featured_image | image_url }} {{ featured_image.width }}w"
+        src="{{ featured_image | image_url: width: 533 }}"
+        sizes="(min-width: 1200px) calc((1200px - 8rem) / 4), (min-width: 750px) calc((100vw - 8rem) / 3), calc((100vw - 4rem) / 2)"
+        alt="{{ featured_image.alt | escape | default: product.title }}"
+        loading="{% if lazy_load %}lazy{% else %}eager{% endif %}"
+        class="product-card__image product-card__image--primary"
+        width="{{ featured_image.width }}"
+        height="{{ featured_image.height }}"
+      >
+      
+      {%- if secondary_image and settings.product_show_secondary_image -%}
+        <img 
+          srcset="{%- if secondary_image.width >= 165 -%}{{ secondary_image | image_url: width: 165 }} 165w,{%- endif -%}
+                 {%- if secondary_image.width >= 360 -%}{{ secondary_image | image_url: width: 360 }} 360w,{%- endif -%}
+                 {%- if secondary_image.width >= 533 -%}{{ secondary_image | image_url: width: 533 }} 533w,{%- endif -%}
+                 {%- if secondary_image.width >= 720 -%}{{ secondary_image | image_url: width: 720 }} 720w,{%- endif -%}
+                 {{ secondary_image | image_url }} {{ secondary_image.width }}w"
+          src="{{ secondary_image | image_url: width: 533 }}"
+          sizes="(min-width: 1200px) calc((1200px - 8rem) / 4), (min-width: 750px) calc((100vw - 8rem) / 3), calc((100vw - 4rem) / 2)"
+          alt="{{ secondary_image.alt | escape | default: product.title }}"
+          loading="lazy"
+          class="product-card__image product-card__image--secondary"
+          width="{{ secondary_image.width }}"
+          height="{{ secondary_image.height }}"
+        >
+      {%- endif -%}
+    {%- else -%}
+      <div class="product-card__placeholder">
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+    {%- endif -%}
+    
+    {%- comment -%} Badges {%- endcomment -%}
+    <div class="product-card__badges">
+      {%- if on_sale -%}
+        <span class="product-card__badge product-card__badge--sale">
+          {%- case settings.sale_badge_style -%}
+            {%- when 'percentage' -%}
+              -{{ sale_percentage }}%
+            {%- when 'amount' -%}
+              {{ 'products.product.save' | t }} {{ current_variant.compare_at_price | minus: current_variant.price | money }}
+            {%- else -%}
+              {{ 'products.product.on_sale' | t }}
+          {%- endcase -%}
+        </span>
+      {%- endif -%}
+      
+      {%- unless product.available -%}
+        <span class="product-card__badge product-card__badge--soldout">
+          {{ 'products.product.sold_out' | t }}
+        </span>
+      {%- endunless -%}
+    </div>
+    
+    {%- comment -%} Wishlist Button {%- endcomment -%}
+    <button 
+      class="product-card__wishlist"
+      aria-label="{{ 'products.product.add_to_wishlist' | t }}"
+      data-wishlist-add="{{ product.id }}"
+    >
+      {%- render 'icon-heart' -%}
+    </button>
+    
+    {%- comment -%} Quick Actions {%- endcomment -%}
+    {%- if show_quick_add and product.available -%}
+      <div class="product-card__actions">
+        {%- if product.variants.size == 1 -%}
+          <button 
+            class="product-card__action-btn"
+            data-add-to-cart-quick="{{ current_variant.id }}"
+          >
+            {%- render 'icon-cart' -%}
+            <span>{{ 'products.product.add_to_cart' | t }}</span>
+          </button>
+        {%- else -%}
+          <button 
+            class="product-card__action-btn"
+            data-quick-view="{{ product.url }}"
+          >
+            {%- render 'icon-eye' -%}
+            <span>{{ 'products.product.quick_view' | t }}</span>
+          </button>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+  
+  {%- comment -%} Content {%- endcomment -%}
+  <div class="product-card__content">
+    {%- if show_vendor and product.vendor -%}
+      <span class="product-card__vendor">{{ product.vendor }}</span>
+    {%- endif -%}
+    
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+    
+    {%- if show_rating -%}
+      <div class="product-card__rating">
+        {%- render 'product-rating', product: product -%}
+      </div>
+    {%- endif -%}
+    
+    <div class="product-card__price{% if on_sale %} product-card__price--on-sale{% endif %}">
+      <span class="product-card__price-regular">
+        {{ current_variant.price | money }}
+      </span>
+      {%- if on_sale -%}
+        <span class="product-card__price-compare">
+          {{ current_variant.compare_at_price | money }}
+        </span>
+      {%- endif -%}
+    </div>
+    
+    {%- comment -%} Color Swatches {%- endcomment -%}
+    {%- if product.options_by_name['Color'].values.size > 1 -%}
+      <div class="product-card__swatches">
+        {%- assign max_swatches = 4 -%}
+        {%- for color in product.options_by_name['Color'].values limit: max_swatches -%}
+          <span
+            class="product-card__swatch"
+            style="background-color: {{ color | handleize }};"
+            title="{{ color }}"
+          ></span>
+        {%- endfor -%}
+        {%- if product.options_by_name['Color'].values.size > max_swatches -%}
+          <span class="product-card__swatch-more">+{{ product.options_by_name['Color'].values.size | minus: max_swatches }}</span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</article>

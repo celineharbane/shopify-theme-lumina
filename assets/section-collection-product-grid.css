@@ -1,0 +1,114 @@
+/* Collection Product Grid Section */
+
+.collection-product-grid {
+  padding: 40px 0;
+}
+
+.collection-product-grid__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border, #e5e5e5);
+}
+
+.collection-product-grid__filter-toggle .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.collection-product-grid__filter-toggle .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.collection-product-grid__info {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.collection-product-grid__count {
+  margin: 0;
+  color: var(--color-text-secondary, #666);
+  font-size: 0.875rem;
+}
+
+.collection-product-grid__sort {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.collection-sort-select {
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  border: 1px solid var(--color-border, #e5e5e5);
+  border-radius: 4px;
+  background-color: var(--color-background, #fff);
+  font-size: 0.875rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 16px;
+}
+
+.collection-product-grid__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--mobile-columns, 2), 1fr);
+  gap: var(--grid-gap, 1.5rem);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media screen and (min-width: 750px) {
+  .collection-product-grid__grid {
+    grid-template-columns: repeat(var(--desktop-columns, 4), 1fr);
+  }
+}
+
+.collection-product-grid__item {
+  margin: 0;
+}
+
+.collection-product-grid__pagination {
+  margin-top: 3rem;
+}
+
+.collection-product-grid__empty {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.collection-product-grid__empty p {
+  margin-bottom: 1.5rem;
+  color: var(--color-text-secondary, #666);
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 749px) {
+  .collection-product-grid__toolbar {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .collection-product-grid__info {
+    order: -1;
+    width: 100%;
+  }
+
+  .collection-product-grid__filter-toggle,
+  .collection-product-grid__sort {
+    width: 100%;
+  }
+
+  .collection-product-grid__filter-toggle .button,
+  .collection-sort-select {
+    width: 100%;
+  }
+}

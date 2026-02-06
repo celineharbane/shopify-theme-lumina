@@ -1,0 +1,321 @@
+/* ============================================
+   LUMINA THEME - Mega Menu Styles (Ritual-inspired)
+   Luxury fashion magazine aesthetic
+   ============================================ */
+
+/* Mega Menu Container */
+.mega-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--color-background);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 20px 60px rgba(var(--color-text-rgb), 0.08);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+              visibility 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 99;
+}
+
+.header__dropdown[open] .mega-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mega-menu__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.5fr;
+  gap: 4rem;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 4rem;
+}
+
+/* Mega Menu Columns */
+.mega-menu__column {
+  display: flex;
+  flex-direction: column;
+}
+
+.mega-menu__column-title {
+  font-family: var(--font-heading-family);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-text);
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.mega-menu__links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.mega-menu__link {
+  font-size: 1.4rem;
+  color: var(--color-text-light);
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.mega-menu__link:hover {
+  color: var(--color-text);
+  transform: translateX(5px);
+}
+
+.mega-menu__link::before {
+  content: '';
+  width: 0;
+  height: 1px;
+  background-color: var(--color-accent);
+  margin-right: 0;
+  transition: width 0.3s ease, margin-right 0.3s ease;
+}
+
+.mega-menu__link:hover::before {
+  width: 15px;
+  margin-right: 10px;
+}
+
+/* Featured Product in Mega Menu */
+.mega-menu__featured {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+}
+
+.mega-menu__featured-image {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+}
+
+.mega-menu__featured-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.mega-menu__featured:hover .mega-menu__featured-image img {
+  transform: scale(1.05);
+}
+
+.mega-menu__featured-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 3rem 2rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  color: white;
+}
+
+.mega-menu__featured-title {
+  font-family: var(--font-heading-family);
+  font-size: 2rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.mega-menu__featured-subtitle {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  opacity: 0.8;
+}
+
+.mega-menu__featured-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Promo Banner in Mega Menu */
+.mega-menu__promo {
+  grid-column: span 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: var(--color-background-secondary);
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.mega-menu__promo-text {
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-text-light);
+}
+
+.mega-menu__promo-text strong {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* Announcement Bar */
+.announcement-bar {
+  background-color: var(--color-primary);
+  color: var(--color-button-text);
+  padding: 1rem 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.announcement-bar a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.announcement-bar a:hover {
+  text-decoration-color: var(--color-accent);
+}
+
+/* Magazine Style Header */
+.header--magazine {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header--magazine .header__inner {
+  height: auto;
+  flex-direction: column;
+  padding: 2rem 0;
+}
+
+.header--magazine .header__logo {
+  margin-bottom: 2rem;
+}
+
+.header--magazine .header__logo-text {
+  font-size: 3.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.header--magazine .header__nav {
+  width: 100%;
+  justify-content: center;
+  border-top: 1px solid var(--color-border);
+  padding-top: 2rem;
+}
+
+.header--magazine .header__menu {
+  gap: 0;
+}
+
+.header--magazine .header__menu-link {
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 400;
+}
+
+.header--magazine .header__icons {
+  position: absolute;
+  top: 2rem;
+  right: 0;
+}
+
+/* Centered Logo Style */
+.header--centered .header__inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+.header--centered .header__logo {
+  grid-column: 2;
+  justify-self: center;
+}
+
+.header--centered .header__nav {
+  grid-column: 1;
+  grid-row: 1;
+  justify-content: flex-start;
+}
+
+.header--centered .header__icons {
+  grid-column: 3;
+  justify-content: flex-end;
+}
+
+/* Minimal Header Style */
+.header--minimal {
+  background: transparent;
+}
+
+.header--minimal .header__inner {
+  height: 6rem;
+}
+
+.header--minimal .header__menu-link {
+  padding: 0.8rem 1.2rem;
+  font-size: 1.3rem;
+}
+
+/* Mobile Mega Menu Adaptations */
+@media screen and (max-width: 989px) {
+  .mega-menu__inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .mega-menu__featured {
+    display: none;
+  }
+
+  .mega-menu__promo {
+    grid-column: span 1;
+  }
+}
+
+/* Hover Animations */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mega-menu__column {
+  animation: slideInFromTop 0.5s ease forwards;
+}
+
+.mega-menu__column:nth-child(1) { animation-delay: 0s; }
+.mega-menu__column:nth-child(2) { animation-delay: 0.05s; }
+.mega-menu__column:nth-child(3) { animation-delay: 0.1s; }
+.mega-menu__column:nth-child(4) { animation-delay: 0.15s; }
+
+/* Focus States for Accessibility */
+.mega-menu__link:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+}
+
+.mega-menu__featured-link:focus-visible {
+  outline: 2px solid white;
+  outline-offset: -4px;
+}

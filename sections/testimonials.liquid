@@ -1,0 +1,295 @@
+{{ 'section-testimonials.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign color_scheme = section.settings.color_scheme
+  assign layout = section.settings.layout
+-%}
+
+<section 
+  id="Testimonials-{{ section.id }}"
+  class="testimonials{% if color_scheme != 'none' %} color-scheme-{{ color_scheme }}{% endif %} layout-{{ layout }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="testimonials"
+  style="
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="testimonials__container page-width">
+    
+    {%- if section.settings.title != blank or section.settings.subheading != blank -%}
+      <div class="testimonials__header text-center" data-aos="fade-up">
+        {%- if section.settings.subheading != blank -%}
+          <p class="testimonials__subheading subheading">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="testimonials__title h2">{{ section.settings.title }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if layout == 'slider' -%}
+      <testimonial-slider class="testimonials__slider" data-autoplay="{{ section.settings.autoplay }}" data-autoplay-speed="{{ section.settings.autoplay_speed }}">
+        <div class="testimonials__slides">
+          {%- for block in section.blocks -%}
+            <div class="testimonials__slide{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+              {%- render 'testimonial-card', block: block, show_image: section.settings.show_images, show_rating: section.settings.show_rating -%}
+            </div>
+          {%- endfor -%}
+        </div>
+
+        {%- if section.blocks.size > 1 -%}
+          <div class="testimonials__navigation">
+            <button type="button" class="testimonials__nav-button testimonials__nav-button--prev" aria-label="{{ 'accessibility.previous_slide' | t }}">
+              {%- render 'icon-chevron-left' -%}
+            </button>
+            <div class="testimonials__dots">
+              {%- for block in section.blocks -%}
+                <button 
+                  type="button" 
+                  class="testimonials__dot{% if forloop.first %} is-active{% endif %}"
+                  data-index="{{ forloop.index0 }}"
+                  aria-label="{{ 'accessibility.go_to_slide' | t: num: forloop.index }}"
+                ></button>
+              {%- endfor -%}
+            </div>
+            <button type="button" class="testimonials__nav-button testimonials__nav-button--next" aria-label="{{ 'accessibility.next_slide' | t }}">
+              {%- render 'icon-chevron-right' -%}
+            </button>
+          </div>
+        {%- endif -%}
+      </testimonial-slider>
+
+    {%- elsif layout == 'grid' -%}
+      <div class="testimonials__grid" style="--columns: {{ section.settings.columns }};">
+        {%- for block in section.blocks -%}
+          <div class="testimonials__item" data-aos="fade-up" data-aos-delay="{{ forloop.index0 | times: 100 }}" {{ block.shopify_attributes }}>
+            {%- render 'testimonial-card', block: block, show_image: section.settings.show_images, show_rating: section.settings.show_rating -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+    {%- elsif layout == 'carousel' -%}
+      <div class="testimonials__carousel">
+        <div class="testimonials__track">
+          {%- for block in section.blocks -%}
+            <div class="testimonials__carousel-item" {{ block.shopify_attributes }}>
+              {%- render 'testimonial-card', block: block, show_image: section.settings.show_images, show_rating: section.settings.show_rating, compact: true -%}
+            </div>
+          {%- endfor -%}
+          {%- comment -%} Duplicate for infinite scroll {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            <div class="testimonials__carousel-item" aria-hidden="true">
+              {%- render 'testimonial-card', block: block, show_image: section.settings.show_images, show_rating: section.settings.show_rating, compact: true -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "section section-testimonials",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Customer Reviews"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "slider", "label": "Slider (single)" },
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel (marquee)" }
+      ],
+      "default": "slider"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Grid columns (desktop)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "info": "Only applies to grid layout"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_images",
+      "label": "Show customer photos",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show star rating",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Slider settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-rotate slides",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Change slides every",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5,
+      "unit": "sec"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" }
+      ],
+      "default": "light"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "This is the best product I've ever purchased. The quality is outstanding and the customer service was exceptional."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author name",
+          "default": "Jane Smith"
+        },
+        {
+          "type": "text",
+          "id": "author_title",
+          "label": "Author title/location",
+          "default": "Verified Buyer"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Author photo"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Associated product (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Absolutely love this product! It exceeded all my expectations. The quality is superb and shipping was incredibly fast.",
+            "author": "Sarah M.",
+            "author_title": "Verified Buyer"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "I've been a customer for years and they never disappoint. This is my go-to store for all my needs.",
+            "author": "Michael R.",
+            "author_title": "Loyal Customer"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "The attention to detail is remarkable. You can tell they really care about their products and customers.",
+            "author": "Emily K.",
+            "author_title": "First-time Buyer"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

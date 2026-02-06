@@ -1,0 +1,306 @@
+{{ 'section-main-collection.css' | asset_url | stylesheet_tag }}
+
+<section class="main-search section-padding" data-section-id="{{ section.id }}">
+  <div class="page-width">
+
+    {%- comment -%} Search Header {%- endcomment -%}
+    <div class="main-search__header">
+      <h1 class="main-search__title h2">
+        {{ 'templates.search.title' | t }}
+      </h1>
+
+      <form action="{{ routes.search_url }}" method="get" role="search" class="main-search__form">
+        <div class="main-search__input-wrapper">
+          <input
+            type="search"
+            name="q"
+            id="Search-{{ section.id }}"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ 'general.search.placeholder' | t }}"
+            class="main-search__input"
+            aria-label="{{ 'general.search.search' | t }}"
+          >
+          <button type="submit" class="main-search__submit" aria-label="{{ 'general.search.submit' | t }}">
+            {%- render 'icon-search' -%}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {%- if search.performed -%}
+      {%- if search.results_count > 0 -%}
+        <p class="main-search__results-count">
+          {{ 'templates.search.results_with_count_and_term' | t: count: search.results_count, terms: search.terms }}
+        </p>
+
+        {%- comment -%} Filter Tabs {%- endcomment -%}
+        <div class="main-search__filters">
+          <a href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&type=product"
+             class="main-search__filter-btn{% if search.types contains 'product' %} is-active{% endif %}">
+            {{ 'general.search.products' | t }}
+          </a>
+          <a href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&type=article"
+             class="main-search__filter-btn{% if search.types contains 'article' %} is-active{% endif %}">
+            {{ 'general.search.articles' | t }}
+          </a>
+          <a href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&type=page"
+             class="main-search__filter-btn{% if search.types contains 'page' %} is-active{% endif %}">
+            {{ 'general.search.pages' | t }}
+          </a>
+        </div>
+
+        {%- comment -%} Results Grid {%- endcomment -%}
+        <div class="main-search__grid collection-grid" style="--columns-desktop: {{ section.settings.columns_desktop }}; --columns-mobile: {{ section.settings.columns_mobile }};">
+          {%- for item in search.results -%}
+            {%- case item.object_type -%}
+              {%- when 'product' -%}
+                {%- render 'product-card',
+                  product: item,
+                  show_vendor: section.settings.show_vendor,
+                  image_ratio: section.settings.image_ratio,
+                  show_secondary_image: section.settings.show_secondary_image
+                -%}
+
+              {%- when 'article' -%}
+                <article class="search-result search-result--article">
+                  {%- if item.featured_media -%}
+                    <a href="{{ item.url }}" class="search-result__image">
+                      {{ item.featured_media | image_url: width: 400 | image_tag: loading: 'lazy', alt: item.title }}
+                    </a>
+                  {%- endif -%}
+                  <div class="search-result__content">
+                    <span class="search-result__type">{{ 'general.search.articles' | t }}</span>
+                    <h3 class="search-result__title h4">
+                      <a href="{{ item.url }}">{{ item.title }}</a>
+                    </h3>
+                    {%- if item.excerpt != blank -%}
+                      <p class="search-result__excerpt">{{ item.excerpt | strip_html | truncate: 150 }}</p>
+                    {%- endif -%}
+                  </div>
+                </article>
+
+              {%- when 'page' -%}
+                <article class="search-result search-result--page">
+                  <div class="search-result__content">
+                    <span class="search-result__type">{{ 'general.search.pages' | t }}</span>
+                    <h3 class="search-result__title h4">
+                      <a href="{{ item.url }}">{{ item.title }}</a>
+                    </h3>
+                    {%- if item.content != blank -%}
+                      <p class="search-result__excerpt">{{ item.content | strip_html | truncate: 150 }}</p>
+                    {%- endif -%}
+                  </div>
+                </article>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+
+        {%- comment -%} Pagination {%- endcomment -%}
+        {%- if paginate.pages > 1 -%}
+          {%- render 'pagination', paginate: paginate -%}
+        {%- endif -%}
+
+      {%- else -%}
+        <div class="main-search__no-results">
+          <p>{{ 'templates.search.no_results' | t: terms: search.terms }}</p>
+          <a href="{{ routes.all_products_collection_url }}" class="button">
+            {{ 'cart.continue_shopping' | t }}
+          </a>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+  </div>
+</section>
+
+{%- paginate search.results by section.settings.products_per_page -%}
+{%- endpaginate -%}
+
+<style>
+.main-search__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.main-search__title {
+  margin-bottom: 1.5rem;
+}
+
+.main-search__form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.main-search__input-wrapper {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.main-search__input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: none;
+  font-size: 1rem;
+}
+
+.main-search__submit {
+  padding: 1rem 1.5rem;
+  background: var(--color-primary);
+  color: var(--color-button-text);
+  border: none;
+  cursor: pointer;
+}
+
+.main-search__results-count {
+  text-align: center;
+  color: var(--color-text-light);
+  margin-bottom: 1.5rem;
+}
+
+.main-search__filters {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.main-search__filter-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  color: var(--color-text);
+  transition: all 0.2s;
+}
+
+.main-search__filter-btn:hover,
+.main-search__filter-btn.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-button-text);
+}
+
+.main-search__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns-mobile, 2), 1fr);
+  gap: var(--grid-gap);
+}
+
+@media (min-width: 750px) {
+  .main-search__grid {
+    grid-template-columns: repeat(var(--columns-desktop, 4), 1fr);
+  }
+}
+
+.search-result {
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.search-result__image img {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+}
+
+.search-result__content {
+  padding: 1rem;
+}
+
+.search-result__type {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-light);
+}
+
+.search-result__title {
+  margin: 0.5rem 0;
+}
+
+.search-result__title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.search-result__excerpt {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.main-search__no-results {
+  text-align: center;
+  padding: 3rem;
+}
+
+.main-search__no-results p {
+  margin-bottom: 1.5rem;
+  color: var(--color-text-light);
+}
+</style>
+
+{% schema %}
+{
+  "name": "Search results",
+  "tag": "section",
+  "class": "section-main-search",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 16,
+      "label": "Products per page"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "Columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (2:3)" },
+        { "value": "landscape", "label": "Landscape (4:3)" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Show secondary image on hover",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
