@@ -35,6 +35,7 @@ Lumina.fetchJSON = async (url, options = {}) => {
   try {
     const response = await fetch(url, {
       ...options,
+      credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -277,6 +278,7 @@ class CartDrawer extends HTMLElement {
     this.overlay = this.querySelector('.cart-drawer__overlay');
     this.closeButton = this.querySelector('[data-cart-close]');
     this.loading = this.querySelector('#cart-drawer-loading');
+    this.isRefreshing = false; // Prevent concurrent refreshes
   }
 
   connectedCallback() {
@@ -340,7 +342,11 @@ class CartDrawer extends HTMLElement {
 
       const response = await fetch(Lumina.routes.cartChange, {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       });
 
       if (!response.ok) {
@@ -381,7 +387,11 @@ class CartDrawer extends HTMLElement {
 
       const response = await fetch(Lumina.routes.cartChange, {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       });
 
       if (!response.ok) {
@@ -458,10 +468,16 @@ class CartDrawer extends HTMLElement {
   }
 
   async refresh() {
+    // Prevent concurrent refreshes
+    if (this.isRefreshing) return;
+    this.isRefreshing = true;
+
     this.showLoading();
 
     try {
-      const response = await fetch(`${Lumina.routes.cart}?section_id=cart-drawer`);
+      const response = await fetch(`${Lumina.routes.cart}?section_id=cart-drawer`, {
+        credentials: 'same-origin'
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -520,6 +536,7 @@ class CartDrawer extends HTMLElement {
       console.error('Failed to refresh cart:', error);
       this.showNotification(Lumina.cartStrings?.error || 'Failed to update cart', 'error');
     } finally {
+      this.isRefreshing = false;
       this.hideLoading();
     }
   }
@@ -571,29 +588,43 @@ class ProductForm extends HTMLElement {
     this.submitButton.classList.add('is-loading');
 
     const formData = new FormData(this.form);
-    
+
     try {
       const response = await fetch(Lumina.routes.cartAdd, {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       });
-      
+
+      // Check if response is ok before parsing JSON
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response');
+      }
+
       const result = await response.json();
-      
+
       if (result.status === 422) {
         this.handleError(result.description);
         return;
       }
-      
+
       // Refresh cart and open drawer
       document.dispatchEvent(new CustomEvent('cart:refresh'));
-      
+
       if (Lumina.settings.cartType === 'drawer') {
         document.dispatchEvent(new CustomEvent('cart:open'));
       } else if (Lumina.settings.cartType === 'popup') {
         this.showNotification('Product added to cart');
       }
-      
+
     } catch (error) {
       console.error('Add to cart error:', error);
       this.handleError(Lumina.cartStrings.error);
@@ -885,7 +916,7 @@ class PredictiveSearch extends HTMLElement {
 
     try {
       const url = `${Lumina.routes.predictiveSearch}?q=${encodeURIComponent(query)}&resources[type]=product,collection,article&resources[limit]=4&section_id=predictive-search`;
-      const response = await fetch(url);
+      const response = await fetch(url, { credentials: 'same-origin' });
       const html = await response.text();
       
       const parser = new DOMParser();
@@ -1062,12 +1093,26 @@ class QuickAdd {
 
       const response = await fetch(Lumina.routes.cartAdd, {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       });
+
+      // Check if response is ok before parsing JSON
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response');
+      }
 
       const result = await response.json();
 
-      if (result.status === 422 || !response.ok) {
+      if (result.status === 422) {
         this.showNotification(result.description || Lumina.cartStrings?.error || 'Error adding to cart', 'error');
         return;
       }
@@ -1147,7 +1192,9 @@ class QuickView {
 
     try {
       // Use main-product section as fallback if quick-view section doesn't exist
-      const response = await fetch(`${productUrl}?section_id=quick-view`);
+      const response = await fetch(`${productUrl}?section_id=quick-view`, {
+        credentials: 'same-origin'
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -1290,6 +1337,53 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Cart page quantity updates (AJAX)
+  const cartForm = document.getElementById('cart-form');
+  if (cartForm) {
+    // Handle quantity changes on cart page
+    cartForm.addEventListener('change', Lumina.debounce(async (e) => {
+      const quantityInput = e.target.closest('[data-quantity-input]');
+      if (!quantityInput) return;
+
+      const quantityWrapper = quantityInput.closest('quantity-input');
+      const line = quantityWrapper?.dataset.line;
+      const quantity = parseInt(quantityInput.value, 10);
+
+      if (!line) return;
+
+      // Show loading state
+      const cartItem = quantityInput.closest('.cart-item');
+      if (cartItem) cartItem.classList.add('is-updating');
+
+      try {
+        const formData = new FormData();
+        formData.append('line', line);
+        formData.append('quantity', quantity.toString());
+
+        const response = await fetch(Lumina.routes.cartChange, {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Reload page to show updated cart
+        window.location.reload();
+
+      } catch (error) {
+        console.error('Failed to update cart:', error);
+        if (cartItem) cartItem.classList.remove('is-updating');
+        alert(Lumina.cartStrings?.error || 'Error updating cart');
+      }
+    }, 500));
+  }
 });
 
 window.Lumina = Lumina;

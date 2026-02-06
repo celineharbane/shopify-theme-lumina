@@ -70,8 +70,8 @@
                 </div>
 
                 <div class="cart-item__quantity">
-                  <div class="quantity-input">
-                    <button type="button" class="quantity-input__button" data-quantity-minus aria-label="{{ 'cart.decrease' | t: title: item.product.title }}">
+                  <quantity-input class="quantity-input" data-line="{{ forloop.index }}">
+                    <button type="button" class="quantity-input__button" name="minus" aria-label="{{ 'cart.decrease' | t: title: item.product.title }}">
                       {%- render 'icons', icon: 'minus', size: 16 -%}
                     </button>
                     <input
@@ -81,13 +81,12 @@
                       min="0"
                       class="quantity-input__field"
                       data-quantity-input
-                      data-line="{{ forloop.index }}"
                       aria-label="{{ 'cart.quantity' | t }}"
                     >
-                    <button type="button" class="quantity-input__button" data-quantity-plus aria-label="{{ 'cart.increase' | t: title: item.product.title }}">
+                    <button type="button" class="quantity-input__button" name="plus" aria-label="{{ 'cart.increase' | t: title: item.product.title }}">
                       {%- render 'icons', icon: 'plus', size: 16 -%}
                     </button>
-                  </div>
+                  </quantity-input>
                   <a href="{{ item.url_to_remove }}" class="cart-item__remove">
                     {%- render 'icons', icon: 'trash', size: 16 -%}
                     <span>{{ 'cart.remove' | t: title: item.product.title }}</span>
