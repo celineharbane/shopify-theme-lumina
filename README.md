@@ -193,13 +193,15 @@ To add a new language:
 
 ## 🤝 Support
 
-For support and customization inquiries:
-- Email: support@luminatheme.com
-- Documentation: docs.luminatheme.com
+Pour toute question ou demande de personnalisation :
+- GitHub Issues : [github.com/celineharbane/shopify-theme-lumina/issues](https://github.com/celineharbane/shopify-theme-lumina/issues)
 
-## 📄 License
+## 📄 Licence
 
-This theme is licensed for use on a single Shopify store. Redistribution or resale is prohibited.
+**MIT License** - Copyright (c) 2024 Céline Harbane
+
+Ce thème est open source. Vous êtes libre de l'utiliser, le modifier et le distribuer.
+Travail personnel réalisé avec passion.
 
 ## 🔄 Changelog
 
