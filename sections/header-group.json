@@ -13,6 +13,9 @@
   "sections": {
     "header": {
       "type": "header",
+      "custom_css": [
+        ".cart-drawer.is-open .cart-drawer__containerSpecificity: (0,3,0) {transform: translate(0); BACKGROUND-COLOR: blanchedalmond;}"
+      ],
       "settings": {
         "logo_width": 150,
         "menu": "main-menu",
