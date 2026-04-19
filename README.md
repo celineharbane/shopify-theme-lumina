@@ -1,219 +1,80 @@
-# LUMINA - Premium Shopify Theme
+# Jocelyne Bosschot — thème WordPress
 
-![LUMINA Theme](https://via.placeholder.com/1200x600/1a1a2e/ffffff?text=LUMINA+Premium+Theme)
+Thème WordPress one-page pour **Jocelyne Bosschot**, artiste sculpteur céramique à Saint-Laurent-du-Var (06700). Esthétique wabi-sabi, tons terre, bilingue FR/EN, SEO et référencement géographique intégrés.
 
-**LUMINA** is a premium, conversion-optimized Shopify theme built from the ground up with Online Store 2.0 architecture. Designed for fashion, lifestyle, and luxury brands, LUMINA combines elegant aesthetics with powerful e-commerce features.
+> Cette branche (`claude/implement-wordpress-design-Lqkrc`) contient **uniquement le thème WordPress**. L'autre projet (thème Shopify Lumina) vit sur `main`.
 
-## ✨ Key Features
+## Installation
 
-### Design & UX
-- **Modern, Minimalist Design** - Clean typography and generous whitespace
-- **Fully Responsive** - Optimized for mobile, tablet, and desktop
-- **Dark Mode Ready** - Color schemes for light and dark aesthetics
-- **Smooth Animations** - AOS (Animate on Scroll) with reduced motion support
-- **Accessible** - WCAG 2.1 AA compliant
+1. Zipper le contenu de ce dépôt (tous les fichiers à la racine) en `jocelyne-bosschot.zip`.
+2. Dans WordPress (6.x) : **Apparence → Thèmes → Ajouter → Téléverser**, choisir le zip, activer.
+3. Dans **Réglages → Lecture**, choisir « Une page statique » et assigner une page d'accueil vide — le thème utilisera `front-page.php`.
 
-### E-commerce Features
-- **Ajax Cart Drawer** - Add to cart without page reload
-- **Quick View Modal** - Preview products without leaving the page
-- **Predictive Search** - Real-time search suggestions
-- **Product Zoom** - High-resolution image zoom on hover
-- **Variant Picker** - Button and dropdown styles with color swatches
-- **Trust Badges** - Build customer confidence
+Alternative : copier le dossier dans `wp-content/themes/jocelyne-bosschot/` puis activer.
 
-### Performance
-- **Fast Loading** - Optimized CSS and minimal JavaScript
-- **Lazy Loading** - Images load as needed
-- **Modern CSS** - CSS Grid and Flexbox layout
-- **No jQuery Dependency** - Vanilla JavaScript only
-
-### Sections Available
-- Hero Slideshow with video support
-- Featured Collection
-- Image with Text
-- Multicolumn (icons, stats, content)
-- Testimonials (slider, grid, carousel)
-- Newsletter (centered, split, background)
-- FAQ / Collapsible content
-- Collection List
-- Product page (gallery layouts, tabs)
-- Customer account pages
-
-## 📦 Installation
-
-### Via Shopify Admin
-1. Download the theme as a ZIP file
-2. Go to **Online Store > Themes** in your Shopify admin
-3. Click **Add theme > Upload ZIP file**
-4. Select the LUMINA ZIP file
-5. Click **Customize** to configure
-
-### Via Shopify CLI
-```bash
-shopify theme push --store your-store.myshopify.com
-```
-
-## 🎨 Customization
-
-### Theme Settings
-
-Access theme settings via **Customize > Theme settings**:
-
-#### Colors
-- Primary color (buttons, links)
-- Secondary color (accents)
-- Background colors
-- Text colors
-
-#### Typography
-- Heading font family
-- Body font family
-- Font scale
-
-#### Layout
-- Page width
-- Section spacing
-- Border radius
-
-#### Cart
-- Cart type (drawer/page)
-- Cart notes
-- Upsell products
-
-### Section Settings
-
-Each section includes comprehensive settings:
-- Color schemes (none, light, dark, accent)
-- Padding controls
-- Animation options
-- Layout variations
-
-## 📁 Theme Structure
+## Structure
 
 ```
-lumina/
-├── assets/
-│   ├── base.css              # Core styles
-│   ├── animations.css        # AOS animations
-│   ├── component-*.css       # Component styles
-│   ├── section-*.css         # Section styles
-│   └── lumina.js             # Main JavaScript
-├── config/
-│   └── settings_schema.json  # Theme settings
-├── layout/
-│   └── theme.liquid          # Main layout
-├── locales/
-│   ├── en.default.json       # English translations
-│   └── fr.json               # French translations
-├── sections/
-│   ├── header.liquid
-│   ├── footer.liquid
-│   ├── hero-slideshow.liquid
-│   ├── featured-collection.liquid
-│   ├── image-with-text.liquid
-│   ├── multicolumn.liquid
-│   ├── testimonials.liquid
-│   ├── newsletter.liquid
-│   ├── faq.liquid
-│   ├── collection-list.liquid
-│   ├── main-product.liquid
-│   ├── main-login.liquid
-│   ├── main-register.liquid
-│   ├── main-account.liquid
-│   └── main-404.liquid
-├── snippets/
-│   ├── css-variables.liquid  # CSS custom properties
-│   ├── icons.liquid          # SVG icon library
-│   ├── product-card.liquid   # Product card component
-│   ├── cart-drawer.liquid    # Ajax cart drawer
-│   ├── testimonial-card.liquid
-│   ├── quick-view-modal.liquid
-│   ├── search-modal.liquid
-│   └── social-icons.liquid
-└── templates/
-    ├── index.json
-    ├── product.json
-    ├── collection.json
-    ├── cart.json
-    ├── page.json
-    ├── 404.json
-    └── customers/
-        ├── login.json
-        ├── register.json
-        └── account.json
+style.css              En-tête officiel du thème
+functions.php          Enqueue, supports, menus, textdomain
+header.php             <head>, nav, bouton langue
+footer.php             Pied de page + lightbox
+front-page.php         Page d'accueil (somme des sections)
+index.php              Fallback identique à front-page
+inc/
+  seo.php              Méta SEO/GEO + schema.org JSON-LD
+  content.php          Données statiques (galeries, boutique, expos…)
+  contact.php          Handler du formulaire (admin-post.php, wp_mail)
+template-parts/
+  hero.php             Hero + carrousel auto (5 images)
+  galeries.php         6 collections avec onglets
+  boutique.php         Grille boutique (9 pièces)
+  demarche.php         Portrait + citation Monticelli
+  parcours.php         Timeline + Diplôme d'Honneur
+  news.php             Expositions avec schema.org Event
+  presse.php           Articles + dossiers PDF
+  contact.php          Formulaire + infos + notices
+assets/
+  css/theme.css        Styles portés du prototype
+  js/theme.js          Carrousel, onglets, lightbox, langue, menu
 ```
 
-## 🔧 Development
+## Fonctionnalités
 
-### Requirements
-- Node.js 18+
-- Shopify CLI 3.x
+**Design**
+- Palette OKLCH : argile, sable, crème, terre foncée, or, sauge
+- Polices Google : Cormorant Garamond (display) + DM Sans (texte)
+- Texture de grain SVG subtile en overlay
+- Animations d'apparition au scroll (IntersectionObserver)
+- Respect de `prefers-reduced-motion`
 
-### Local Development
-```bash
-# Install Shopify CLI
-npm install -g @shopify/cli @shopify/theme
+**SEO & GEO (page d'accueil)**
+- Meta `description`, `keywords`, Open Graph, Twitter Card
+- `hreflang` FR/EN, `canonical`
+- Balises `geo.region`, `geo.placename`, `geo.position`, `ICBM`
+- Schema.org `LocalBusiness` + `Artist` en JSON-LD
+- Microdonnées `schema.org/Event` sur chaque exposition
+- HTML sémantique, hiérarchie H1 → H3 propre
 
-# Start development server
-shopify theme dev --store your-store.myshopify.com
-```
+**Bilingue FR/EN**
+- Pas de plugin requis — bascule côté client via `html[lang]`
+- Préférence persistée en `localStorage`
+- Hooks `load_theme_textdomain` prêts pour WPML / Polylang si besoin
 
-### Code Standards
-- BEM methodology for CSS classes
-- Semantic HTML5 elements
-- ARIA labels for accessibility
-- CSS custom properties for theming
+**Interactions**
+- Navigation fixe avec fond flouté au scroll
+- Menu mobile burger
+- Carrousel hero (fade, 4 s)
+- Onglets galerie
+- Lightbox au clic
+- Formulaire de contact via `admin-post.php` + `wp_mail()`
 
-## 🌐 Browser Support
+## Personnalisation
 
-- Chrome (last 2 versions)
-- Firefox (last 2 versions)
-- Safari (last 2 versions)
-- Edge (last 2 versions)
-- iOS Safari
-- Chrome for Android
+- Remplacer les images CDN dans `inc/content.php` par celles de la médiathèque (`wp_get_attachment_image_url()`).
+- Adapter l'e-mail destinataire via le filtre `jb_contact_to` ou l'option `admin_email`.
+- Ajuster les variables CSS `--clay`, `--cream`, etc. dans `assets/css/theme.css`.
 
-## 📝 Translations
+## Licence
 
-LUMINA includes translations for:
-- English (default)
-- French
-
-To add a new language:
-1. Copy `locales/en.default.json`
-2. Rename to `locales/[language_code].json`
-3. Translate all strings
-
-## ⚡ Performance Tips
-
-1. **Optimize Images** - Use WebP format when possible
-2. **Limit Sections** - Avoid more than 10-15 sections per page
-3. **Lazy Load** - Enable lazy loading for below-fold content
-4. **Minimize Apps** - Each app adds JavaScript overhead
-
-## 🤝 Support
-
-Pour toute question ou demande de personnalisation :
-- GitHub Issues : [github.com/celineharbane/shopify-theme-lumina/issues](https://github.com/celineharbane/shopify-theme-lumina/issues)
-
-## 📄 Licence
-
-**MIT License** - Copyright (c) 2024 Céline Harbane
-
-Ce thème est open source. Vous êtes libre de l'utiliser, le modifier et le distribuer.
-Travail personnel réalisé avec passion.
-
-## 🔄 Changelog
-
-### Version 1.0.0
-- Initial release
-- Online Store 2.0 architecture
-- 15+ customizable sections
-- Full customer account pages
-- Ajax cart functionality
-- Predictive search
-- Multi-language support
-
----
-
-**LUMINA** - Elevate your e-commerce experience.
+MIT — voir `LICENSE`.
