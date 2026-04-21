@@ -19,7 +19,10 @@
 }
 
 .header.is-scrolled {
-  box-shadow: 0 2px 10px rgba(var(--color-text-rgb), 0.08);
+  box-shadow: var(--shadow-sm);
+  background-color: rgba(var(--color-background-rgb), 0.88);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
 }
 
 .header--transparent:not(.is-scrolled) {
@@ -90,23 +93,44 @@
 }
 
 .header__menu-link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.4rem;
   padding: 1rem 1.5rem;
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 500;
+  letter-spacing: 0.02em;
   color: var(--color-text);
   text-decoration: none;
-  transition: color var(--animation-duration) ease;
+  transition: color var(--duration-base) var(--ease-out);
   cursor: pointer;
   background: none;
   border: none;
 }
 
+.header__menu-link::after {
+  content: "";
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 0.6rem;
+  height: 1.5px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-base) var(--ease-luxury);
+  pointer-events: none;
+}
+
 .header__menu-link:hover,
 .header__menu-link.is-active {
   color: var(--color-accent);
+}
+
+.header__menu-link:hover::after,
+.header__menu-link.is-active::after {
+  transform: scaleX(1);
 }
 
 .header__menu-link:focus-visible {
@@ -201,13 +225,21 @@
   border: none;
   cursor: pointer;
   color: var(--color-text);
-  transition: color var(--animation-duration) ease;
+  transition:
+    color var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
   border-radius: 50%;
   position: relative;
 }
 
 .header__icon-button:hover {
   color: var(--color-accent);
+  background-color: var(--color-background-secondary);
+}
+
+.header__icon-button:active {
+  transform: scale(0.92);
 }
 
 .header__icon-button:focus-visible {
@@ -223,20 +255,23 @@
 /* Cart Count */
 .header__cart-count {
   position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
+  top: 0.2rem;
+  right: 0.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 1.8rem;
-  height: 1.8rem;
-  padding: 0 0.4rem;
+  min-width: 1.9rem;
+  height: 1.9rem;
+  padding: 0 0.5rem;
   font-size: 1rem;
   font-weight: 700;
   background-color: var(--color-accent);
   color: white;
-  border-radius: 50%;
+  border-radius: 999px;
+  border: 2px solid var(--color-background);
   transition: transform var(--animation-duration) ease;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 2px 6px rgba(var(--color-accent-rgb), 0.35);
 }
 
 .header__cart-count.is-hidden {
